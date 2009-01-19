@@ -17,30 +17,6 @@
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		014CEA440018CDF011CA2923 /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				ZERO_LINK = YES;
-			};
-			name = Development;
-		};
-		014CEA450018CDF011CA2923 /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				ZERO_LINK = NO;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXContainerItemProxy section */
 		33B2AC8709285572004B1632 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -204,23 +180,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = mach_inject_bundle_Prefix.pch;
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				LIBRARY_STYLE = DYNAMIC;
-				OTHER_LDFLAGS = (
-					"-seg1addr",
-					0xc0000000,
-				);
-				PRODUCT_NAME = mach_inject_bundle;
-				WRAPPER_EXTENSION = framework;
-			};
 			dependencies = (
 				33B2AC8A09285578004B1632 /* PBXTargetDependency */,
 			);
@@ -236,12 +195,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 33B2AC7B09285567004B1632 /* Build configuration list for PBXProject "mach_inject_bundle" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				014CEA440018CDF011CA2923 /* Development */,
-				014CEA450018CDF011CA2923 /* Deployment */,
-			);
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* mach_inject_bundle */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -252,6 +206,7 @@
 					ProjectRef = 33B2AC8109285572004B1632 /* mach_inject_bundle_stub.xcodeproj */;
 				},
 			);
+			projectRoot = "";
 			targets = (
 				8DC2EF4F0486A6940098B216 /* mach_inject_bundle */,
 			);

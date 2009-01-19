@@ -2,7 +2,6 @@
 {
 	08FB7793FE84155DC02AAC07 /* Project object */ = {
 		activeBuildConfigurationName = Deployment;
-		activeBuildStyle = 014CEA4C0018CE3E11CA2923 /* Development */;
 		activeExecutable = 79797E0107F6323100E7262E /* mach_override */;
 		activeTarget = 8DD76F840486A9BA00D96B5E /* mach_override */;
 		addToTargets = (
@@ -11,7 +10,6 @@
 		breakpoints = (
 			79172B090961163800BB4729 /* mach_override.c:126 */,
 		);
-		breakpointsGroup = 79172A580960DDE000BB4729 /* XCBreakpointsBucket */;
 		codeSenseManager = 79797E0607F6323800E7262E /* Code sense */;
 		executables = (
 			79797E0107F6323100E7262E /* mach_override */,
@@ -75,7 +73,7 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 157341247;
+			PBXPerProjectTemplateStateSaveDate = 254088073;
 			PBXPrepackagedSmartGroups_v2 = (
 				{
 					PBXTransientLocationAtTop = bottom;
@@ -252,48 +250,45 @@
 					};
 				},
 			);
-			PBXWorkspaceStateSaveDate = 157341247;
+			PBXWorkspaceStateSaveDate = 254088073;
 		};
 		sourceControlManager = 79797E0507F6323800E7262E /* Source Control */;
 		userBuildSettings = {
 		};
 	};
-	79172A580960DDE000BB4729 /* XCBreakpointsBucket */ = {
-		isa = XCBreakpointsBucket;
-		name = "Project Breakpoints";
-		objects = (
-			79172B090961163800BB4729 /* mach_override.c:126 */,
-		);
-	};
 	79172B090961163800BB4729 /* mach_override.c:126 */ = {
 		isa = PBXFileBreakpoint;
 		actions = (
 		);
+		breakpointStyle = 0;
 		continueAfterActions = 0;
+		countType = 0;
 		delayBeforeContinue = 0;
 		fileReference = 79797E0707F6327800E7262E /* mach_override.c */;
 		functionName = "mach_override_ptr()";
 		hitCount = 1;
+		ignoreCount = 0;
 		lineNumber = 126;
 		modificationTime = 157357679.624459;
 		state = 1;
 	};
 	794FB6AE095E50DE00FEA73E /* test_mach_override.cp */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1196, 1430}}";
-			sepNavSelRange = "{1830, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {1188, 1330}}";
+			sepNavSelRange = "{971, 0}";
+			sepNavVisRange = "{706, 854}";
 			sepNavVisRect = "{{0, 0}, {686, 1430}}";
 			sepNavWindowFrame = "{{896, 75}, {725, 1503}}";
 		};
 	};
 	79797E0107F6323100E7262E /* mach_override */ = {
 		isa = PBXExecutable;
-		activeArgIndex = 2147483647;
 		activeArgIndices = (
 		);
 		argumentStrings = (
 		);
 		autoAttachOnCrash = 1;
+		breakpointsEnabled = 1;
 		configStateDict = {
 		};
 		customDataFormattersEnabled = 1;

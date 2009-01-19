@@ -18,21 +18,6 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		4A9504CCFFE6A4B311CA0CBA /* Debug */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		4A9504CDFFE6A4B311CA0CBA /* Release */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-			};
-			name = Release;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXContainerItemProxy section */
 		79B752D40968839200B3814A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -84,7 +69,7 @@
 		79B752D00968839200B3814A /* mach_inject_bundle.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = mach_inject_bundle.xcodeproj; path = ../mach_inject_bundle/mach_inject_bundle.xcodeproj; sourceTree = SOURCE_ROOT; };
 		79B752DA096883A100B3814A /* mach_inject_bundle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = mach_inject_bundle.framework; path = ../mach_inject_bundle/build/Deployment/mach_inject_bundle.framework; sourceTree = SOURCE_ROOT; };
 		79B752F3096883FA00B3814A /* mach_inject_sandbox_bundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = mach_inject_sandbox_bundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		79B752F4096883FA00B3814A /* mach_inject_sandbox_bundle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "mach_inject_sandbox_bundle-Info.plist"; sourceTree = "<group>"; };
+		79B752F4096883FA00B3814A /* mach_inject_sandbox_bundle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "mach_inject_sandbox_bundle-Info.plist"; sourceTree = "<group>"; };
 		79B752FA0968842C00B3814A /* InjectedBundleClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleClass.h; sourceTree = "<group>"; };
 		79B752FB0968842C00B3814A /* InjectedBundleClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InjectedBundleClass.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -213,50 +198,11 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "mach_inject_sandbox_bundle-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = mach_inject_sandbox_bundle;
-				WRAPPER_EXTENSION = bundle;
-				ZERO_LINK = YES;
-			};
 			dependencies = (
 			);
 			name = mach_inject_sandbox_bundle;
 			productName = mach_inject_sandbox_bundle;
 			productReference = 79B752F3096883FA00B3814A /* mach_inject_sandbox_bundle.bundle */;
-			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
-<plist version=\"1.0\">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
-	<key>CFBundleExecutable</key>
-	<string>${EXECUTABLE_NAME}</string>
-	<key>CFBundleIdentifier</key>
-	<string>com.yourcompany.mach_inject_sandbox_bundle</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundlePackageType</key>
-	<string>BNDL</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>CFBundleVersion</key>
-	<string>1.0</string>
-</dict>
-</plist>
-";
 			productType = "com.apple.product-type.bundle";
 		};
 		8D1107260486CEB800E47090 /* mach_inject_sandbox */ = {
@@ -270,8 +216,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-			};
 			dependencies = (
 				79B752D70968839600B3814A /* PBXTargetDependency */,
 				79B752FF0968844900B3814A /* PBXTargetDependency */,
@@ -288,12 +232,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "mach_inject_sandbox" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				4A9504CCFFE6A4B311CA0CBA /* Debug */,
-				4A9504CDFFE6A4B311CA0CBA /* Release */,
-			);
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* mach_inject_sandbox */;
 			projectDirPath = "";
@@ -303,6 +242,7 @@
 					ProjectRef = 79B752D00968839200B3814A /* mach_inject_bundle.xcodeproj */;
 				},
 			);
+			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* mach_inject_sandbox */,
 				79B752F2096883FA00B3814A /* mach_inject_sandbox_bundle */,

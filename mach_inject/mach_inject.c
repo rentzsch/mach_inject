@@ -206,12 +206,12 @@ mach_inject(
 						(pointer_t) stackContents, STACK_CONTENTS_SIZE);
 		
 		// set remote Program Counter
-		remoteThreadState.eip = (unsigned int) (remoteCode);
-		remoteThreadState.eip += threadEntryOffset;
+		remoteThreadState.__eip = (unsigned int) (remoteCode);
+		remoteThreadState.__eip += threadEntryOffset;
 		
 		// set remote Stack Pointer
 		ASSERT_CAST( unsigned int, remoteStack );
-		remoteThreadState.esp = (unsigned int) remoteStack;
+		remoteThreadState.__esp = (unsigned int) remoteStack;
 		
 		// create thread and launch it
 		err = thread_create_running( remoteTask, i386_THREAD_STATE,

@@ -2,7 +2,6 @@
 {
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeBuildConfigurationName = Release;
-		activeBuildStyle = 4A9504CCFFE6A4B311CA0CBA /* Debug */;
 		activeExecutable = 79B751360968663D00B3814A /* mach_inject_sandbox */;
 		activeTarget = 8D1107260486CEB800E47090 /* mach_inject_sandbox */;
 		addToTargets = (
@@ -73,8 +72,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 157845306;
-			PBXWorkspaceStateSaveDate = 157845306;
+			PBXPerProjectTemplateStateSaveDate = 254088048;
+			PBXWorkspaceStateSaveDate = 254088048;
 		};
 		sourceControlManager = 79B751440968664200B3814A /* Source Control */;
 		userBuildSettings = {
@@ -90,12 +89,12 @@
 	};
 	79B751360968663D00B3814A /* mach_inject_sandbox */ = {
 		isa = PBXExecutable;
-		activeArgIndex = 2147483647;
 		activeArgIndices = (
 		);
 		argumentStrings = (
 		);
 		autoAttachOnCrash = 0;
+		breakpointsEnabled = 1;
 		configStateDict = {
 			"PBXLSLaunchAction-1" = {
 				PBXLSLaunchAction = 1;

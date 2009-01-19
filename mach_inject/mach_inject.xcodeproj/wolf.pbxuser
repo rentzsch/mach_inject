@@ -2,7 +2,6 @@
 {
 	08FB7793FE84155DC02AAC07 /* Project object */ = {
 		activeBuildConfigurationName = Deployment;
-		activeBuildStyle = 014CEA4C0018CE3E11CA2923 /* Development */;
 		activeExecutable = 79797DEF07F62C4C00E7262E /* mach_inject */;
 		activeTarget = 8DD76F840486A9BA00D96B5E /* mach_inject */;
 		addToTargets = (
@@ -35,7 +34,7 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 158997538;
+			PBXPerProjectTemplateStateSaveDate = 254088029;
 			PBXPrepackagedSmartGroups_v2 = (
 				{
 					PBXTransientLocationAtTop = bottom;
@@ -212,120 +211,20 @@
 					};
 				},
 			);
-			PBXWorkspaceStateSaveDate = 158997538;
-		};
-		perUserProjectItems = {
-			791C3CD1097A242400E290AF /* PBXTextBookmark */ = 791C3CD1097A242400E290AF /* PBXTextBookmark */;
-			791C3CD7097A242400E290AF /* PBXTextBookmark */ = 791C3CD7097A242400E290AF /* PBXTextBookmark */;
-			791C3D59097A29AF00E290AF /* PBXTextBookmark */ = 791C3D59097A29AF00E290AF /* PBXTextBookmark */;
-			791C3D5A097A29AF00E290AF /* PBXTextBookmark */ = 791C3D5A097A29AF00E290AF /* PBXTextBookmark */;
-			791C3D5C097A29AF00E290AF /* PBXTextBookmark */ = 791C3D5C097A29AF00E290AF /* PBXTextBookmark */;
-			7972D60409691590005EA115 /* PBXTextBookmark */ = 7972D60409691590005EA115 /* PBXTextBookmark */;
+			PBXWorkspaceStateSaveDate = 254088029;
 		};
 		sourceControlManager = 79797DF607F62C5400E7262E /* Source Control */;
 		userBuildSettings = {
 		};
 	};
-	791C3CD1097A242400E290AF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 791C3CD2097A242400E290AF /* thread_status.h */;
-		rLen = 1;
-		rLoc = 83;
-		rType = 1;
-	};
-	791C3CD2097A242400E290AF /* thread_status.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = thread_status.h;
-		path = /usr/include/mach/thread_status.h;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {663, 1056}}";
-			sepNavSelRange = "{2833, 16}";
-			sepNavVisRect = "{{0, 398}, {663, 658}}";
-			sepNavWindowFrame = "{{61, 250}, {702, 731}}";
-		};
-	};
-	791C3CD7097A242400E290AF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 791C3CD8097A242400E290AF /* task.h */;
-		rLen = 1;
-		rLoc = 203;
-		rType = 1;
-	};
-	791C3CD8097A242400E290AF /* task.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = task.h;
-		path = /usr/include/mach/i386/task.h;
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {663, 17904}}";
-			sepNavSelRange = "{3615, 21}";
-			sepNavVisRect = "{{0, 2113}, {663, 658}}";
-			sepNavWindowFrame = "{{38, 271}, {702, 731}}";
-		};
-	};
-	791C3D59097A29AF00E290AF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 79797DF807F62C5E00E7262E /* mach_inject.c */;
-		name = "mach_inject.c: 179";
-		rLen = 0;
-		rLoc = 5516;
-		rType = 0;
-		vrLen = 2227;
-		vrLoc = 0;
-	};
-	791C3D5A097A29AF00E290AF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 791C3D5B097A29AF00E290AF /* thread_status.h */;
-		name = THREAD_STATE_MAX;
-		rLen = 16;
-		rLoc = 2833;
-		rType = 0;
-		vrLen = 1691;
-		vrLoc = 1360;
-	};
-	791C3D5B097A29AF00E290AF /* thread_status.h */ = {
-		isa = PBXFileReference;
-		name = thread_status.h;
-		path = /usr/include/mach/thread_status.h;
-		sourceTree = "<absolute>";
-	};
-	791C3D5C097A29AF00E290AF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 791C3D5D097A29AF00E290AF /* task.h */;
-		name = thread_state_flavor_t;
-		rLen = 21;
-		rLoc = 3615;
-		rType = 0;
-		vrLen = 975;
-		vrLoc = 3135;
-	};
-	791C3D5D097A29AF00E290AF /* task.h */ = {
-		isa = PBXFileReference;
-		name = task.h;
-		path = /usr/include/mach/i386/task.h;
-		sourceTree = "<absolute>";
-	};
-	7972D60409691590005EA115 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 79797DF807F62C5E00E7262E /* mach_inject.c */;
-		name = "mach_inject.c: 133";
-		rLen = 0;
-		rLoc = 4801;
-		rType = 0;
-		vrLen = 2385;
-		vrLoc = 3212;
-	};
 	79797DEF07F62C4C00E7262E /* mach_inject */ = {
 		isa = PBXExecutable;
-		activeArgIndex = 2147483647;
 		activeArgIndices = (
 		);
 		argumentStrings = (
 		);
 		autoAttachOnCrash = 1;
+		breakpointsEnabled = 1;
 		configStateDict = {
 		};
 		customDataFormattersEnabled = 1;
@@ -355,10 +254,11 @@
 	};
 	79797DF807F62C5E00E7262E /* mach_inject.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {711, 2868}}";
-			sepNavSelRange = "{5516, 0}";
+			sepNavIntBoundsRect = "{{0, 0}, {774, 4956}}";
+			sepNavSelRange = "{7000, 0}";
+			sepNavVisRange = "{6569, 591}";
 			sepNavVisRect = "{{0, 0}, {711, 880}}";
-			sepNavWindowFrame = "{{1, 75}, {750, 953}}";
+			sepNavWindowFrame = "{{1581, 118}, {750, 953}}";
 		};
 	};
 	79797DF907F62C5F00E7262E /* mach_inject.h */ = {

@@ -2,7 +2,6 @@
 {
 	29B97313FDCFA39411CA2CEA /* Project object */ = {
 		activeBuildConfigurationName = Development;
-		activeBuildStyle = 4A9504CCFFE6A4B311CA0CBA /* Development */;
 		activeExecutable = 79ACCB0E07FD4D2900D4147B /* DisposeWindow+Beep_Injector */;
 		activeTarget = 8D1107260486CEB800E47090 /* DisposeWindow+Beep_Injector */;
 		addToTargets = (
@@ -59,7 +58,7 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 157799149;
+			PBXPerProjectTemplateStateSaveDate = 254087995;
 			PBXPrepackagedSmartGroups_v2 = (
 				{
 					PBXTransientLocationAtTop = bottom;
@@ -236,7 +235,7 @@
 					};
 				},
 			);
-			PBXWorkspaceStateSaveDate = 157799149;
+			PBXWorkspaceStateSaveDate = 254087995;
 		};
 		sourceControlManager = 79ACCB2207FD4D7000D4147B /* Source Control */;
 		userBuildSettings = {
@@ -252,12 +251,12 @@
 	};
 	79ACCB0E07FD4D2900D4147B /* DisposeWindow+Beep_Injector */ = {
 		isa = PBXExecutable;
-		activeArgIndex = 2147483647;
 		activeArgIndices = (
 		);
 		argumentStrings = (
 		);
 		autoAttachOnCrash = 1;
+		breakpointsEnabled = 1;
 		configStateDict = {
 		};
 		customDataFormattersEnabled = 1;

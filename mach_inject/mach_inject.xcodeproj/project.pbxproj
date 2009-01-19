@@ -13,30 +13,6 @@
 		8DD76F890486A9BA00D96B5E /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 097DBE83FE8419DDC02AAC07 /* CoreServices.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		014CEA4C0018CE3E11CA2923 /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				ZERO_LINK = YES;
-			};
-			name = Development;
-		};
-		014CEA4D0018CE3E11CA2923 /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				ZERO_LINK = NO;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		8DD76F8B0486A9BA00D96B5E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -119,11 +95,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				INSTALL_PATH = "$(HOME)/bin";
-				PRODUCT_NAME = mach_inject;
-			};
 			dependencies = (
 			);
 			name = mach_inject;
@@ -138,15 +109,11 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 33B2AC38092854CE004B1632 /* Build configuration list for PBXProject "mach_inject" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				014CEA4C0018CE3E11CA2923 /* Development */,
-				014CEA4D0018CE3E11CA2923 /* Deployment */,
-			);
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 08FB7794FE84155DC02AAC07 /* mach_inject */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				8DD76F840486A9BA00D96B5E /* mach_inject */,
 			);

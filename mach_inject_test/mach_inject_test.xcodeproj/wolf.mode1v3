@@ -206,8 +206,7 @@
 		<dict>
 			<key>ChosenToolbarItems</key>
 			<array>
-				<string>active-target-popup</string>
-				<string>active-buildstyle-popup</string>
+				<string>active-combo-popup</string>
 				<string>NSToolbarFlexibleSpaceItem</string>
 				<string>buildOrClean</string>
 				<string>build-and-goOrGo</string>
@@ -378,9 +377,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>790CE5040DEE7C9C00A43665</string>
+				<string>797442E20F25138500341189</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>790CE5050DEE7C9C00A43665</string>
+				<string>797442E30F25138500341189</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -512,8 +511,10 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>790CE5070DEE7C9C00A43665</string>
-		<string>/Users/wolf/code/trac/mach_star/mach_inject_test/mach_inject_test.xcodeproj</string>
+		<string>7974426C0F25131D00341189</string>
+		<string>7974426F0F25131D00341189</string>
+		<string>797442750F25131D00341189</string>
+		<string>/Users/wolf/code/github/mach_star/mach_inject_test/mach_inject_test.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
 	<string>782 271 831 576 0 0 2560 1578 </string>
@@ -524,6 +525,8 @@
 			<false/>
 			<key>Identifier</key>
 			<string>windowTool.build</string>
+			<key>IsVertical</key>
+			<true/>
 			<key>Layout</key>
 			<array>
 				<dict>
@@ -535,7 +538,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CD0528F0623707200166675</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>load_bundle.c</string>
+								<string>mach_inject.c</string>
 								<key>StatusBarVisibility</key>
 								<true/>
 							</dict>
@@ -544,7 +547,7 @@
 								<key>Frame</key>
 								<string>{{0, 0}, {1530, 185}}</string>
 								<key>RubberWindowFrame</key>
-								<string>30 528 1530 467 0 0 1680 1028 </string>
+								<string>206 1044 1530 467 0 0 2560 1578 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -570,7 +573,7 @@
 								<key>Frame</key>
 								<string>{{0, 190}, {1530, 236}}</string>
 								<key>RubberWindowFrame</key>
-								<string>30 528 1530 467 0 0 1680 1028 </string>
+								<string>206 1044 1530 467 0 0 2560 1578 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXBuildResultsModule</string>
@@ -592,15 +595,19 @@
 			<true/>
 			<key>TableOfContents</key>
 			<array>
-				<string>1C78EAA5065D492600B07095</string>
-				<string>1C78EAA6065D492600B07095</string>
+				<string>7974427B0F25131D00341189</string>
+				<string>7974427C0F25131D00341189</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
 			<key>ToolbarConfiguration</key>
 			<string>xcode.toolbar.config.buildV3</string>
 			<key>WindowString</key>
-			<string>30 528 1530 467 0 0 1680 1028 </string>
+			<string>206 1044 1530 467 0 0 2560 1578 </string>
+			<key>WindowToolGUID</key>
+			<string>7974427B0F25131D00341189</string>
+			<key>WindowToolIsVisible</key>
+			<true/>
 		</dict>
 		<dict>
 			<key>FirstTimeWindowDisplayed</key>

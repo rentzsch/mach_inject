@@ -2,7 +2,6 @@
 {
 	089C1669FE841209C02AAC07 /* Project object */ = {
 		activeBuildConfigurationName = Deployment;
-		activeBuildStyle = 4F9091AC011F3BD104CA0E50 /* Development */;
 		activeTarget = 8D01CCC60486CAD60068D4B7 /* mach_inject_bundle_stub */;
 		addToTargets = (
 			8D01CCC60486CAD60068D4B7 /* mach_inject_bundle_stub */,
@@ -50,10 +49,10 @@
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					200,
-					63,
+					203,
+					60,
 					20,
-					48.1626,
+					48,
 					43,
 					43,
 				);
@@ -67,7 +66,7 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 158999936;
+			PBXPerProjectTemplateStateSaveDate = 254088042;
 			PBXPrepackagedSmartGroups_v2 = (
 				{
 					PBXTransientLocationAtTop = bottom;
@@ -244,7 +243,7 @@
 					};
 				},
 			);
-			PBXWorkspaceStateSaveDate = 158999936;
+			PBXWorkspaceStateSaveDate = 254088042;
 		};
 		sourceControlManager = 79ACC34907FD36C600D4147B /* Source Control */;
 		userBuildSettings = {
