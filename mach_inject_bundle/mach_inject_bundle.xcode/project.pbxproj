@@ -1,0 +1,470 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 39;
+	objects = {
+		014CEA440018CDF011CA2923 = {
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ZERO_LINK = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		014CEA450018CDF011CA2923 = {
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ZERO_LINK = NO;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
+//010
+//011
+//012
+//013
+//014
+//030
+//031
+//032
+//033
+//034
+		034768DFFF38A50411DB9C8B = {
+			children = (
+				8DC2EF5B0486A6940098B216,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+//030
+//031
+//032
+//033
+//034
+//080
+//081
+//082
+//083
+//084
+		0867D690FE84028FC02AAC07 = {
+			buildSettings = {
+			};
+			buildStyles = (
+				014CEA440018CDF011CA2923,
+				014CEA450018CDF011CA2923,
+			);
+			hasScannedForEncodings = 1;
+			isa = PBXProject;
+			mainGroup = 0867D691FE84028FC02AAC07;
+			productRefGroup = 034768DFFF38A50411DB9C8B;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 79ACCBDB07FD520100D4147B;
+					ProjectRef = 79ACCBD907FD520100D4147B;
+				},
+			);
+			targets = (
+				8DC2EF4F0486A6940098B216,
+			);
+		};
+		0867D691FE84028FC02AAC07 = {
+			children = (
+				79ACCBD907FD520100D4147B,
+				32C88DFF0371C24200C91783,
+				089C1665FE841158C02AAC07,
+				0867D69AFE84028FC02AAC07,
+				034768DFFF38A50411DB9C8B,
+			);
+			isa = PBXGroup;
+			name = mach_inject_bundle;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 = {
+			children = (
+				1058C7B0FEA5585E11CA2CBB,
+				1058C7B2FEA5585E11CA2CBB,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		0867D69BFE84028FC02AAC07 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		0867D6A5FE840307C02AAC07 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = AppKit.framework;
+			path = /System/Library/Frameworks/AppKit.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		089C1665FE841158C02AAC07 = {
+			children = (
+				79ACC84907FD3E4700D4147B,
+				8DC2EF5A0486A6940098B216,
+				089C1666FE841158C02AAC07,
+			);
+			isa = PBXGroup;
+			name = Resources;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		089C1666FE841158C02AAC07 = {
+			children = (
+				089C1667FE841158C02AAC07,
+			);
+			isa = PBXVariantGroup;
+			name = InfoPlist.strings;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		089C1667FE841158C02AAC07 = {
+			fileEncoding = 10;
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
+			name = English;
+			path = English.lproj/InfoPlist.strings;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+//080
+//081
+//082
+//083
+//084
+//100
+//101
+//102
+//103
+//104
+		1058C7B0FEA5585E11CA2CBB = {
+			children = (
+				1058C7B1FEA5585E11CA2CBB,
+			);
+			isa = PBXGroup;
+			name = "Linked Frameworks";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		1058C7B1FEA5585E11CA2CBB = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = Cocoa.framework;
+			path = /System/Library/Frameworks/Cocoa.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		1058C7B2FEA5585E11CA2CBB = {
+			children = (
+				0867D69BFE84028FC02AAC07,
+				0867D6A5FE840307C02AAC07,
+			);
+			isa = PBXGroup;
+			name = "Other Frameworks";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+//100
+//101
+//102
+//103
+//104
+//320
+//321
+//322
+//323
+//324
+		32C88DFF0371C24200C91783 = {
+			children = (
+				79ACC85707FD3EBD00D4147B,
+				79ACC85807FD3EBD00D4147B,
+				79ACC88507FD40D700D4147B,
+				79ACC88607FD40D700D4147B,
+				79ACC8DB07FD452E00D4147B,
+				32DBCF5E0370ADEE00C91783,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		32DBCF5E0370ADEE00C91783 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = mach_inject_bundle_Prefix.pch;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+//320
+//321
+//322
+//323
+//324
+//790
+//791
+//792
+//793
+//794
+		79ACC84907FD3E4700D4147B = {
+			isa = PBXFileReference;
+			lastKnownFileType = "wrapper.plug-in";
+			name = mach_inject_bundle_stub.bundle;
+			path = ../mach_inject_bundle_stub/build/mach_inject_bundle_stub.bundle;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		79ACC84A07FD3E4700D4147B = {
+			fileRef = 79ACC84907FD3E4700D4147B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		79ACC85707FD3EBD00D4147B = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = mach_inject_bundle.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		79ACC85807FD3EBD00D4147B = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = mach_inject_bundle.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		79ACC85907FD3EBD00D4147B = {
+			fileRef = 79ACC85707FD3EBD00D4147B;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		79ACC85A07FD3EBD00D4147B = {
+			fileRef = 79ACC85807FD3EBD00D4147B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		79ACC88507FD40D700D4147B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = mach_inject.c;
+			path = ../mach_inject/mach_inject.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		79ACC88607FD40D700D4147B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = mach_inject.h;
+			path = ../mach_inject/mach_inject.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		79ACC88707FD40D700D4147B = {
+			fileRef = 79ACC88507FD40D700D4147B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		79ACC88807FD40D700D4147B = {
+			fileRef = 79ACC88607FD40D700D4147B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		79ACC8DB07FD452E00D4147B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = mach_inject_bundle_stub.h;
+			path = ../mach_inject_bundle_stub/mach_inject_bundle_stub.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		79ACC8DC07FD452E00D4147B = {
+			fileRef = 79ACC8DB07FD452E00D4147B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		79ACCBD907FD520100D4147B = {
+			isa = PBXFileReference;
+			lastKnownFileType = "wrapper.pb-project";
+			name = mach_inject_bundle_stub.xcode;
+			path = ../mach_inject_bundle_stub/mach_inject_bundle_stub.xcode;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		79ACCBDB07FD520100D4147B = {
+			children = (
+				79ACCBDC07FD520100D4147B,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		79ACCBDC07FD520100D4147B = {
+			fileType = wrapper.cfbundle;
+			isa = PBXReferenceProxy;
+			path = mach_inject_bundle_stub.bundle;
+			refType = 3;
+			remoteRef = 79ACCBF107FD522C00D4147B;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		79ACCBDF07FD520E00D4147B = {
+			containerPortal = 79ACCBD907FD520100D4147B;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = 8D01CCC60486CAD60068D4B7;
+			remoteInfo = mach_inject_bundle_stub;
+		};
+		79ACCBE007FD520E00D4147B = {
+			isa = PBXTargetDependency;
+			name = "mach_inject_bundle_stub (from mach_inject_bundle_stub.xcode)";
+			targetProxy = 79ACCBDF07FD520E00D4147B;
+		};
+		79ACCBF107FD522C00D4147B = {
+			containerPortal = 79ACCBD907FD520100D4147B;
+			isa = PBXContainerItemProxy;
+			proxyType = 2;
+			remoteGlobalIDString = 8D01CCD20486CAD60068D4B7;
+			remoteInfo = mach_inject_bundle_stub;
+		};
+//790
+//791
+//792
+//793
+//794
+//8D0
+//8D1
+//8D2
+//8D3
+//8D4
+		8DC2EF4F0486A6940098B216 = {
+			buildPhases = (
+				8DC2EF500486A6940098B216,
+				8DC2EF520486A6940098B216,
+				8DC2EF540486A6940098B216,
+				8DC2EF560486A6940098B216,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = mach_inject_bundle_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				LIBRARY_STYLE = DYNAMIC;
+				OTHER_LDFLAGS = "-seg1addr 0xc0000000";
+				PRODUCT_NAME = mach_inject_bundle;
+				WRAPPER_EXTENSION = framework;
+			};
+			dependencies = (
+				79ACCBE007FD520E00D4147B,
+			);
+			isa = PBXNativeTarget;
+			name = mach_inject_bundle;
+			productInstallPath = "$(HOME)/Library/Frameworks";
+			productName = mach_inject_bundle;
+			productReference = 8DC2EF5B0486A6940098B216;
+			productType = "com.apple.product-type.framework";
+		};
+		8DC2EF500486A6940098B216 = {
+			buildActionMask = 2147483647;
+			files = (
+				79ACC85907FD3EBD00D4147B,
+				79ACC88807FD40D700D4147B,
+				79ACC8DC07FD452E00D4147B,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8DC2EF520486A6940098B216 = {
+			buildActionMask = 2147483647;
+			files = (
+				8DC2EF530486A6940098B216,
+				79ACC84A07FD3E4700D4147B,
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8DC2EF530486A6940098B216 = {
+			fileRef = 089C1666FE841158C02AAC07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8DC2EF540486A6940098B216 = {
+			buildActionMask = 2147483647;
+			files = (
+				79ACC85A07FD3EBD00D4147B,
+				79ACC88707FD40D700D4147B,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8DC2EF560486A6940098B216 = {
+			buildActionMask = 2147483647;
+			files = (
+				8DC2EF570486A6940098B216,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8DC2EF570486A6940098B216 = {
+			fileRef = 1058C7B1FEA5585E11CA2CBB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8DC2EF5A0486A6940098B216 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist;
+			path = Info.plist;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8DC2EF5B0486A6940098B216 = {
+			explicitFileType = wrapper.framework;
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = mach_inject_bundle.framework;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+	};
+	rootObject = 0867D690FE84028FC02AAC07;
+}
