@@ -13,12 +13,29 @@
 #include <sys/stat.h>
 #include <sys/errno.h>
 #include <assert.h>
+#include <stdlib.h> // for malloc()
+#include <stdio.h>  // for printf()
+#include <mach-o/fat.h> // for fat structure decoding
+#include <mach-o/arch.h> // to know which is local arch
+#include <fcntl.h> // for open/close
+// for mmap()
+#include <sys/types.h>
+#include <sys/mman.h>
 
 #ifndef	COMPILE_TIME_ASSERT( exp )
 	#define COMPILE_TIME_ASSERT( exp ) { switch (0) { case 0: case (exp):; } }
 #endif
 #define ASSERT_CAST( CAST_TO, CAST_FROM ) \
 	COMPILE_TIME_ASSERT( sizeof(CAST_TO)==sizeof(CAST_FROM) )
+
+#if defined(__i386__)
+void* fixedUpImageFromImage (
+		const void *image, 
+		unsigned long imageSize, 
+		unsigned int jumpTableOffset, 
+		unsigned int jumpTableSize,
+		ptrdiff_t fixUpOffset);
+#endif /* __i386__ */
 
 /*******************************************************************************
 *	
@@ -43,7 +60,9 @@ mach_inject(
 	//	Find the image.
 	const void		*image;
 	unsigned long	imageSize;
-	mach_error_t	err = machImageForPointer( threadEntry, &image, &imageSize );
+	unsigned int	jumpTableOffset;
+	unsigned int	jumpTableSize;
+	mach_error_t	err = machImageForPointer( threadEntry, &image, &imageSize, &jumpTableOffset, &jumpTableSize );
 	
 	//	Initialize stackSize to default if requested.
 	if( stackSize == 0 )
@@ -54,8 +73,23 @@ mach_inject(
 	
 	//	Convert PID to Mach Task ref.
 	mach_port_t	remoteTask = 0;
-	if( !err )
+	if( !err ) {
 		err = task_for_pid( mach_task_self(), targetProcess, &remoteTask );
+#if defined(__i386__)
+		if (err == 5) fprintf(stderr, "Could not access task for pid %d. You probably need to add user to procmod group\n", targetProcess);
+#endif
+	}
+	
+	/** @todo
+		Would be nice to just allocate one block for both the remote stack
+		*and* the remoteCode (including the parameter data block once that's
+		written.
+	*/
+	
+	//	Allocate the remoteStack.
+	vm_address_t remoteStack = (vm_address_t)NULL;
+	if( !err )
+		err = vm_allocate( remoteTask, &remoteStack, stackSize, 1 );
 	
 	//	Allocate the code.
 	vm_address_t remoteCode = (vm_address_t)NULL;
@@ -63,7 +97,16 @@ mach_inject(
 		err = vm_allocate( remoteTask, &remoteCode, imageSize, 1 );
 	if( !err ) {
 		ASSERT_CAST( pointer_t, image );
+#if defined (__ppc__) || defined (__ppc64__)
 		err = vm_write( remoteTask, remoteCode, (pointer_t) image, imageSize );
+#elif defined (__i386__)
+		// on intel, jump table use relative jump instructions (jmp), which means
+		// the offset needs to be corrected. We thus copy the image and fix the offset by hand. 
+		ptrdiff_t fixUpOffset = (ptrdiff_t) (image - remoteCode); 
+		void * fixedUpImage = fixedUpImageFromImage(image, imageSize, jumpTableOffset, jumpTableSize, fixUpOffset);
+		err = vm_write( remoteTask, remoteCode, (pointer_t) fixedUpImage, imageSize );
+		free(fixedUpImage);
+#endif
 	}
 	
 	//	Allocate the paramBlock if specified.
@@ -88,54 +131,16 @@ mach_inject(
 		imageOffset = ((void*) remoteCode) - image;
 	}
 	
-	/** @todo
-		Would be nice to just allocate one block for both the remote stack
-		*and* the remoteCode (including the parameter data block once that's
-							  written.
-							  */
-	
-	//	Allocate the remoteStack.
-	vm_address_t remoteStack = (vm_address_t)NULL;
-	if( !err )
-		err = vm_allocate( remoteTask, &remoteStack, stackSize, 1 );
-	if( !err ) {
-		/** @bug
-		Stack math should be more sophisticated than this (ala redzone on PPC).
-		*/
-		remoteStack += stackSize / 2;
-	}
-#if defined (__i386__)
-	typedef	struct {
-		int32_t	codeOffset;
-		int32_t	paramBlock;
-		int32_t	paramSize;
-	}	i382_thread_entry_stack_parameters;
-	COMPILE_TIME_ASSERT( 12 == sizeof(i382_thread_entry_stack_parameters) );
-	//	
-	if( !err ) {
-		i382_thread_entry_stack_parameters remoteStackData;
-		
-		ASSERT_CAST( int32_t, imageOffset );
-		remoteStackData.codeOffset = imageOffset;
-		
-		ASSERT_CAST( int32_t, remoteParamBlock );
-		remoteStackData.paramBlock = remoteParamBlock;
-		
-		ASSERT_CAST( int32_t, paramSize );
-		remoteStackData.paramSize = paramSize;
-		
-		err = vm_write( remoteTask, remoteStack, (pointer_t) &remoteStackData, sizeof(remoteStackData) );
-	}
-	if( !err ) {
-		remoteStack -= sizeof( i382_thread_entry_stack_parameters );
-	}
-#endif
-	
 	//	Allocate the thread.
 	thread_act_t remoteThread;
+#if defined (__ppc__) || defined (__ppc64__)
 	if( !err ) {
-#if defined (__ppc__)
 		ppc_thread_state_t remoteThreadState;
+		
+		/** @bug
+			Stack math should be more sophisticated than this (ala redzone).
+		*/
+		remoteStack += stackSize / 2;
 		
 		bzero( &remoteThreadState, sizeof(remoteThreadState) );
 		
@@ -159,29 +164,63 @@ mach_inject(
 		ASSERT_CAST( unsigned int, 0xDEADBEEF );
 		remoteThreadState.lr = (unsigned int) 0xDEADBEEF;
 		
+#if 0
+		printf( "remoteCode start: %p\n", (void*) remoteCode );
+		printf( "remoteCode size: %ld\n", imageSize );
+		printf( "remoteCode pc: %p\n", (void*) remoteThreadState.srr0 );
+		printf( "remoteCode end: %p\n",
+			(void*) (((char*)remoteCode)+imageSize) );
+		fflush(0);
+#endif
+		
 		err = thread_create_running( remoteTask, PPC_THREAD_STATE,
 				(thread_state_t) &remoteThreadState, PPC_THREAD_STATE_COUNT,
 				&remoteThread );
+	}
 #elif defined (__i386__)
-		i386_thread_state_t remoteThreadState;
+	if( !err ) {
 		
+		i386_thread_state_t remoteThreadState;
 		bzero( &remoteThreadState, sizeof(remoteThreadState) );
 		
-		ASSERT_CAST( unsigned int, remoteCode );
-		remoteThreadState.eip = (unsigned int) remoteCode;
-		remoteThreadState.eip += threadEntryOffset;
-		assert( remoteThreadState.eip < (remoteCode + imageSize) );
+		vm_address_t dummy_thread_struct = remoteStack;
+		remoteStack += (stackSize / 2); // this is the real stack
+		// (*) increase the stack, since we're simulating a CALL instruction, which normally pushes return address on the stack
+		remoteStack -= 4;
 		
+#define PARAM_COUNT 4
+#define STACK_CONTENTS_SIZE ((1+PARAM_COUNT) * sizeof(unsigned int))
+		unsigned int stackContents[1 + PARAM_COUNT]; // 1 for the return address and 1 for each param
+		// first entry is return address (see above *)
+		stackContents[0] = 0xDEADBEEF; // invalid return address.
+		// then we push function parameters one by one.
+		stackContents[1] =  imageOffset;
+		stackContents[2] = remoteParamBlock;
+		stackContents[3] = paramSize;
+		// We use the remote stack we allocated as the fake thread struct. We should probably use a dedicated memory zone. 
+		// We don't fill it with 0, vm_allocate did it for us
+		stackContents[4] = dummy_thread_struct; 
+		
+		// push stackContents
+		err = vm_write( remoteTask, remoteStack,
+						(pointer_t) stackContents, STACK_CONTENTS_SIZE);
+		
+		// set remote Program Counter
+		remoteThreadState.eip = (unsigned int) (remoteCode);
+		remoteThreadState.eip += threadEntryOffset;
+		
+		// set remote Stack Pointer
 		ASSERT_CAST( unsigned int, remoteStack );
 		remoteThreadState.esp = (unsigned int) remoteStack;
 		
+		// create thread and launch it
 		err = thread_create_running( remoteTask, i386_THREAD_STATE,
-				(thread_state_t) &remoteThreadState, i386_THREAD_STATE_COUNT,
-				&remoteThread );
-#else
-	#error architecture not supported
-#endif
+									 (thread_state_t) &remoteThreadState, i386_THREAD_STATE_COUNT,
+									 &remoteThread );
 	}
+#else
+#error architecture not supported
+#endif
 	
 	if( err ) {
 		if( remoteParamBlock )
@@ -199,13 +238,20 @@ mach_inject(
 machImageForPointer(
 		const void *pointer,
 		const void **image,
-		unsigned long *size )
+		unsigned long *size,
+		unsigned int *jumpTableOffset,
+		unsigned int *jumpTableSize )
 {
 	assert( pointer );
 	assert( image );
 	assert( size );
 	
 	unsigned long p = (unsigned long) pointer;
+	
+	if (jumpTableOffset && jumpTableSize) {
+		*jumpTableOffset = 0;
+		*jumpTableSize = 0;
+	}
 	
 	unsigned long imageIndex, imageCount = _dyld_image_count();
 	for( imageIndex = 0; imageIndex < imageCount; imageIndex++ ) {
@@ -230,6 +276,50 @@ machImageForPointer(
 			if( size ) {
 				;//assertUInt32( st_size );
 				*size = sb.st_size;
+				
+				// needed for Universal binaries. Check if file is fat and get image size from there.
+				int fd = open (imageName, O_RDONLY);
+				size_t mapSize = *size;
+				char * fileImage = mmap (NULL, mapSize, PROT_READ, MAP_FILE, fd, 0);
+				
+				struct fat_header* fatHeader = (struct fat_header *)fileImage;
+				if (fatHeader->magic == OSSwapBigToHostInt32(FAT_MAGIC)) {
+					//printf("This is a fat binary\n");
+					uint32_t archCount = OSSwapBigToHostInt32(fatHeader->nfat_arch);
+					
+					NXArchInfo const *localArchInfo = NXGetLocalArchInfo();
+					
+					struct fat_arch* arch = (struct fat_arch *)(fileImage + sizeof(struct fat_header));
+					struct fat_arch* matchingArch = NULL;
+					
+					int archIndex = 0;
+					for (archIndex = 0; archIndex < archCount; archIndex++) {
+						cpu_type_t cpuType = OSSwapBigToHostInt32(arch[archIndex].cputype);
+						cpu_subtype_t cpuSubtype = OSSwapBigToHostInt32(arch[archIndex].cpusubtype);
+						
+						if (localArchInfo->cputype == cpuType) {
+							matchingArch = arch + archIndex;
+							if (localArchInfo->cpusubtype == cpuSubtype) break;
+						}
+					}
+					
+					if (matchingArch) {
+						*size = OSSwapBigToHostInt32(matchingArch->size);
+						//printf ("found arch-specific size : %p\n", *size);
+					}
+				}
+				
+				munmap (fileImage, mapSize);
+				close (fd);
+			}
+			if (jumpTableOffset && jumpTableSize) {
+				const struct section * jumpTableSection = getsectbynamefromheader( header,
+																				   "__IMPORT",
+																				   "__jump_table" );
+				if (jumpTableSection) {
+					*jumpTableOffset = jumpTableSection->offset;
+					*jumpTableSize = jumpTableSection->size;
+				}
 			}
 			return err_none;
 		}
@@ -237,3 +327,35 @@ machImageForPointer(
 	
 	return err_threadEntry_image_not_found;
 }
+
+#if defined(__i386__)
+void* fixedUpImageFromImage (
+		const void *image, 
+		unsigned long imageSize, 
+		unsigned int jumpTableOffset, 
+		unsigned int jumpTableSize, 
+		ptrdiff_t fixUpOffset)
+{
+	// first copy the full image
+	void *fixedUpImage = (void *) malloc ((size_t)imageSize);
+	bcopy(image, fixedUpImage, imageSize);
+	
+	// address of jump table in copied image
+	void *jumpTable = fixedUpImage + jumpTableOffset;
+	// each JMP instruction is 5 bytes (E9 xx xx xx xx) where E9 is the opcode for JMP
+	int jumpTableCount = jumpTableSize / 5;
+	
+	// skip first "E9"
+	jumpTable++;
+	
+	int entry=0;
+	for (entry = 0; entry < jumpTableCount; entry++) {
+		unsigned int jmpValue = *((unsigned int *)jumpTable);
+		jmpValue += fixUpOffset;
+		*((unsigned int *)jumpTable) = jmpValue;
+		jumpTable+=5;
+	}
+	
+	return fixedUpImage;
+}
+#endif /* __i386__ */

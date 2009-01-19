@@ -29,7 +29,8 @@
 INJECT_ENTRY(
 		ptrdiff_t						codeOffset,
 		mach_inject_bundle_stub_param	*param,
-		size_t							paramSize );
+		size_t							paramSize,
+		char							*dummy_pthread_struc );
 		
 	void*
 pthread_entry(
@@ -53,11 +54,20 @@ EventLoopTimerEntry(
 INJECT_ENTRY(
 		ptrdiff_t						codeOffset,
 		mach_inject_bundle_stub_param	*param,
-		size_t							paramSize )
+		size_t							paramSize,
+		char							*dummy_pthread_struct )
 {
 	assert( param );
 	
 	param->codeOffset = codeOffset;
+	
+#if defined (__i386__)
+	// On intel, per-pthread data is a zone of data that must be allocated.
+	// if not, all function trying to access per-pthread data (all mig functions for instance)
+	// will crash. 
+	extern void __pthread_set_self(char*);
+	__pthread_set_self(dummy_pthread_struct);
+#endif
 	
 	pthread_attr_t attr;
 	pthread_attr_init(&attr); 

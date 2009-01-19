@@ -34,7 +34,7 @@
 #define	INJECT_ENTRY_SYMBOL	"injectEntry"
 
 typedef	void	(*mach_inject_entry)( ptrdiff_t codeOffset, void *paramBlock,
-				size_t paramSize );
+				size_t paramSize, void* dummy_pthread_data );
 	
 /***************************************************************************//**
 	Starts executing threadEntry in a new thread in the process specified by
@@ -63,11 +63,13 @@ mach_inject(
 /***************************************************************************//**
 	Given a pointer, returns its Mach-O image and image size.
 	
-	@param	pointer	->	Required pointer.
-	@param	image	<-	Optional returned pointer to image (really a
-						mach_header).
-	@param	size	<-	Optional returned size of the image.
-	@result			<-	mach_error_t
+	@param	pointer			->	Required pointer.
+	@param	image			<-	Optional returned pointer to image (really a
+								mach_header).
+	@param	size			<-	Optional returned size of the image.
+	@param  jumpTableOffset <-  Optional returned offset of jump table within image (useful on intel)
+	@param  jumpTableSize	<-  Optional returned size of jump table (useful on intel)
+	@result					<-	mach_error_t
 	
 	***************************************************************************/
 
@@ -75,7 +77,9 @@ mach_inject(
 machImageForPointer(
 		const void *pointer,
 		const void **image,
-		unsigned long *size );
+		unsigned long *size,
+		unsigned int *jumpTableOffset,
+		unsigned int *jumpTableSize );
 
 #ifdef	__cplusplus
 	}

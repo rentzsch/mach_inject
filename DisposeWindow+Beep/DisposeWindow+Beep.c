@@ -11,7 +11,9 @@ void	DisposeWindowOverride( WindowRef window );
 #pragma CALL_ON_LOAD load
 void load() {
 	printf( "DisposeWindow+Beep loaded\n" );
-	mach_override( "_DisposeWindow", NULL, DisposeWindowOverride, (void**) &gDisposeWindow );
+	if (mach_override( "_DisposeWindow", NULL, DisposeWindowOverride, (void**) &gDisposeWindow ) != 0) {
+		printf("Override failed!\n");
+	}
 }
 
 void DisposeWindowOverride( WindowRef window ) {
