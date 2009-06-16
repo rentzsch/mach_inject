@@ -9,16 +9,19 @@
 #include <CoreServices/CoreServices.h>
 #include <sys/syslimits.h> // for PATH_MAX.
 #include <mach-o/dyld.h>
+#include <dlfcn.h>
 
 	mach_error_t
 load_bundle_package(
 		const char *bundlePackageFileSystemRepresentation )
 {
+	printf("LBP\n");
 	assert( bundlePackageFileSystemRepresentation );
 	assert( strlen( bundlePackageFileSystemRepresentation ) );
 	
 	mach_error_t err = err_none;
-	
+	mach_error("mach error on bundle load", err);
+
 	//	Morph the FSR into a URL.
 	CFURLRef bundlePackageURL = NULL;
 	if( !err ) {
@@ -30,7 +33,8 @@ load_bundle_package(
 		if( bundlePackageURL == NULL )
 			err = err_load_bundle_url_from_path;
 	}
-	
+	mach_error("mach error on bundle load", err);
+
 	//	Create bundle.
 	CFBundleRef bundle = NULL;
 	if( !err ) {
@@ -38,7 +42,8 @@ load_bundle_package(
 		if( bundle == NULL )
 			err = err_load_bundle_create_bundle;
 	}
-	
+	mach_error("mach error on bundle load", err);
+
 	//	Discover the bundle's executable file.
 	CFURLRef bundleExecutableURL = NULL;
 	if( !err ) {
@@ -47,7 +52,8 @@ load_bundle_package(
 		if( bundleExecutableURL == NULL )
 			err = err_load_bundle_package_executable_url;
 	}
-	
+	mach_error("mach error on bundle load", err);
+
 	//	Morph the executable's URL into an FSR.
 	char bundleExecutableFileSystemRepresentation[PATH_MAX];
 	if( !err ) {
@@ -61,7 +67,8 @@ load_bundle_package(
 			err = err_load_bundle_path_from_url;
 		}
 	}
-	
+	mach_error("mach error on bundle load", err);
+
 	//	Do the real work.
 	if( !err ) {
 		assert( strlen(bundleExecutableFileSystemRepresentation) );
@@ -71,11 +78,12 @@ load_bundle_package(
 	//	Clean up.
 	if( bundleExecutableURL )
 		CFRelease( bundleExecutableURL );
-	if( bundle )
-		CFRelease( bundle );
+	/*if( bundle )
+		CFRelease( bundle );*/
 	if( bundlePackageURL )
 		CFRelease( bundlePackageURL );
 	
+	mach_error("mach error on bundle load", err);
 	return err;
 }
 
@@ -85,63 +93,12 @@ load_bundle_executable(
 {
 	assert( bundleExecutableFileSystemRepresentation );
 	
-	mach_error_t err = err_none;
-	
-	//	Create the object file image.
-	NSObjectFileImage image;
-	if( !err ) {
-		NSObjectFileImageReturnCode imageErr = NSCreateObjectFileImageFromFile(
-			bundleExecutableFileSystemRepresentation, &image );
-		switch( imageErr ) {
-			case NSObjectFileImageFailure:
-				err = err_load_bundle_NSObjectFileImageFailure;
-				break;
-			case NSObjectFileImageSuccess:
-				// Not an error.
-				break;
-			case NSObjectFileImageInappropriateFile:
-				err = err_load_bundle_NSObjectFileImageInappropriateFile;
-				break;
-			case NSObjectFileImageArch:
-				err = err_load_bundle_NSObjectFileImageArch;
-				break;
-			case NSObjectFileImageFormat:
-				err = err_load_bundle_NSObjectFileImageFormat;
-				break;
-			case NSObjectFileImageAccess:
-				err = err_load_bundle_NSObjectFileImageAccess;
-				break;
-			default:
-				assert(0);
-		}
+	printf("FS rep %s\n", bundleExecutableFileSystemRepresentation);
+	void *image = dlopen(bundleExecutableFileSystemRepresentation, RTLD_NOW);
+	printf("OH shit load? %p\n", image);
+	if (!image) {
+		dlerror();
+		return err_load_bundle_NSObjectFileImageFailure;
 	}
-	
-	//	Ensure we can link the image before actually attempting to link it.
-	if( !err ) {
-		assert( image );
-		unsigned long symbolIndex, symbolCount
-			= NSSymbolReferenceCountInObjectFileImage( image );
-		for( symbolIndex = 0; !err && symbolIndex < symbolCount;++symbolIndex) {
-			if( !NSIsSymbolNameDefined( NSSymbolReferenceNameInObjectFileImage(
-				image,
-				symbolIndex,
-				NULL ) ) )
-			{
-				err = err_load_bundle_undefined_symbol;
-			}
-		}
-	}
-	
-	//	Link.
-	if( !err ) {
-		NSModule module = NSLinkModule( image,
-			bundleExecutableFileSystemRepresentation,
-			NSLINKMODULE_OPTION_BINDNOW
-			|NSLINKMODULE_OPTION_PRIVATE
-			|NSLINKMODULE_OPTION_RETURN_ON_ERROR );
-		if( module == NULL )
-			err = err_load_bundle_link_failed;
-	}
-	
-	return err;
+	return 0;
 }

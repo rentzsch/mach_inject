@@ -61,7 +61,7 @@ INJECT_ENTRY(
 	
 	param->codeOffset = codeOffset;
 	
-#if defined (__i386__)
+#if defined (__i386__) || defined(__x86_64__)
 	// On intel, per-pthread data is a zone of data that must be allocated.
 	// if not, all function trying to access per-pthread data (all mig functions for instance)
 	// will crash. 
@@ -113,6 +113,5 @@ EventLoopTimerEntry(
 {
 	assert( inTimer );
 	assert( param );
-	
 	load_bundle_package( param->bundlePackageFileSystemRepresentation );
 }

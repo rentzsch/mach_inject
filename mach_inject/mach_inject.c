@@ -75,11 +75,12 @@ mach_inject(
 	mach_port_t	remoteTask = 0;
 	if( !err ) {
 		err = task_for_pid( mach_task_self(), targetProcess, &remoteTask );
-#if defined(__i386__)
+#if defined(__i386__) || defined(__x86_64__)
+		mach_error("fuck", err);
 		if (err == 5) fprintf(stderr, "Could not access task for pid %d. You probably need to add user to procmod group\n", targetProcess);
 #endif
 	}
-	
+		
 	/** @todo
 		Would be nice to just allocate one block for both the remote stack
 		*and* the remoteCode (including the parameter data block once that's
@@ -91,16 +92,20 @@ mach_inject(
 	if( !err )
 		err = vm_allocate( remoteTask, &remoteStack, stackSize, 1 );
 	
+	
 	//	Allocate the code.
 	vm_address_t remoteCode = (vm_address_t)NULL;
 	if( !err )
 		err = vm_allocate( remoteTask, &remoteCode, imageSize, 1 );
+#if defined(__x86_64__)
+		err = vm_protect(remoteTask, remoteCode, imageSize, 0, VM_PROT_EXECUTE | VM_PROT_WRITE | VM_PROT_READ);
+#endif
 	if( !err ) {
 		ASSERT_CAST( pointer_t, image );
-#if defined (__ppc__) || defined (__ppc64__)
+#if defined (__ppc__) || defined (__ppc64__) || defined(__x86_64__)
 		err = vm_write( remoteTask, remoteCode, (pointer_t) image, imageSize );
 #elif defined (__i386__)
-		// on intel, jump table use relative jump instructions (jmp), which means
+		// on x86, jump table use relative jump instructions (jmp), which means
 		// the offset needs to be corrected. We thus copy the image and fix the offset by hand. 
 		ptrdiff_t fixUpOffset = (ptrdiff_t) (image - remoteCode); 
 		void * fixedUpImage = fixedUpImageFromImage(image, imageSize, jumpTableOffset, jumpTableSize, fixUpOffset);
@@ -119,7 +124,7 @@ mach_inject(
 					(pointer_t) paramBlock, paramSize );
 		}
 	}
-	
+		
 	//	Calculate offsets.
 	ptrdiff_t	threadEntryOffset, imageOffset;
 	if( !err ) {
@@ -127,8 +132,12 @@ mach_inject(
 		ASSERT_CAST( void*, threadEntry );
 		threadEntryOffset = ((void*) threadEntry) - image;
 		
+#if defined(__x86_64__)
+		imageOffset = 0; // RIP-relative addressing
+#else
 		ASSERT_CAST( void*, remoteCode );
 		imageOffset = ((void*) remoteCode) - image;
+#endif
 	}
 	
 	//	Allocate the thread.
@@ -145,24 +154,24 @@ mach_inject(
 		bzero( &remoteThreadState, sizeof(remoteThreadState) );
 		
 		ASSERT_CAST( unsigned int, remoteCode );
-		remoteThreadState.srr0 = (unsigned int) remoteCode;
-		remoteThreadState.srr0 += threadEntryOffset;
-		assert( remoteThreadState.srr0 < (remoteCode + imageSize) );
+		remoteThreadState.__srr0 = (unsigned int) remoteCode;
+		remoteThreadState.__srr0 += threadEntryOffset;
+		assert( remoteThreadState.__srr0 < (remoteCode + imageSize) );
 		
 		ASSERT_CAST( unsigned int, remoteStack );
-		remoteThreadState.r1 = (unsigned int) remoteStack;
+		remoteThreadState.__r1 = (unsigned int) remoteStack;
 		
 		ASSERT_CAST( unsigned int, imageOffset );
-		remoteThreadState.r3 = (unsigned int) imageOffset;
+		remoteThreadState.__r3 = (unsigned int) imageOffset;
 		
 		ASSERT_CAST( unsigned int, remoteParamBlock );
-		remoteThreadState.r4 = (unsigned int) remoteParamBlock;
+		remoteThreadState.__r4 = (unsigned int) remoteParamBlock;
 		
 		ASSERT_CAST( unsigned int, paramSize );
-		remoteThreadState.r5 = (unsigned int) paramSize;
+		remoteThreadState.__r5 = (unsigned int) paramSize;
 		
 		ASSERT_CAST( unsigned int, 0xDEADBEEF );
-		remoteThreadState.lr = (unsigned int) 0xDEADBEEF;
+		remoteThreadState.__lr = (unsigned int) 0xDEADBEEF;
 		
 #if 0
 		printf( "remoteCode start: %p\n", (void*) remoteCode );
@@ -212,10 +221,49 @@ mach_inject(
 		// set remote Stack Pointer
 		ASSERT_CAST( unsigned int, remoteStack );
 		remoteThreadState.__esp = (unsigned int) remoteStack;
-		
+
 		// create thread and launch it
 		err = thread_create_running( remoteTask, i386_THREAD_STATE,
 									 (thread_state_t) &remoteThreadState, i386_THREAD_STATE_COUNT,
+									 &remoteThread );
+	}
+#elif defined(__x86_64__)
+	if( !err ) {
+		
+		x86_thread_state64_t remoteThreadState;
+		bzero( &remoteThreadState, sizeof(remoteThreadState) );
+			
+		vm_address_t dummy_thread_struct = remoteStack;
+		remoteStack += (stackSize / 2); // this is the real stack
+		// (*) increase the stack, since we're simulating a CALL instruction, which normally pushes return address on the stack
+		remoteStack -= 4;
+		
+#define PARAM_COUNT 0
+#define STACK_CONTENTS_SIZE ((1+PARAM_COUNT) * sizeof(unsigned long long))
+		unsigned long long stackContents[1 + PARAM_COUNT]; // 1 for the return address and 1 for each param
+		// first entry is return address (see above *)
+		stackContents[0] = 0x00000DEADBEA7DAD; // invalid return address.
+		
+		// push stackContents
+		err = vm_write( remoteTask, remoteStack,
+						(pointer_t) stackContents, STACK_CONTENTS_SIZE);
+
+		remoteThreadState.__rdi = (unsigned long long) (imageOffset);
+		remoteThreadState.__rsi = (unsigned long long) (remoteParamBlock);
+		remoteThreadState.__rdx = (unsigned long long) (paramSize);
+		remoteThreadState.__rcx = (unsigned long long) (dummy_thread_struct);
+		
+		// set remote Program Counter
+		remoteThreadState.__rip = (unsigned long long) (remoteCode);
+		remoteThreadState.__rip += threadEntryOffset;  
+		
+		// set remote Stack Pointer
+		ASSERT_CAST( unsigned long long, remoteStack );
+		remoteThreadState.__rsp = (unsigned long long) remoteStack;
+				
+		// create thread and launch it
+		err = thread_create_running( remoteTask, x86_THREAD_STATE64,
+									 (thread_state_t) &remoteThreadState, x86_THREAD_STATE64_COUNT,
 									 &remoteThread );
 	}
 #else
@@ -230,6 +278,8 @@ mach_inject(
 		if( remoteStack )
 			vm_deallocate( remoteTask, remoteStack, stackSize );
 	}
+	
+	printf("mach inject done? %d\n", err);
 	
 	return err;
 }
@@ -255,12 +305,17 @@ machImageForPointer(
 	
 	unsigned long imageIndex, imageCount = _dyld_image_count();
 	for( imageIndex = 0; imageIndex < imageCount; imageIndex++ ) {
-		const struct mach_header *header = _dyld_get_image_header( imageIndex );
-		const struct section *section = getsectbynamefromheader( header,
-																	SEG_TEXT,
-																	SECT_TEXT );
+#if defined(__x86_64__)
+		const struct mach_header_64 *header = (const struct mach_header_64 *)_dyld_get_image_header( imageIndex ); // why no function that returns mach_header_64
+		const struct section_64 *section = getsectbynamefromheader_64( header, SEG_TEXT, SECT_TEXT );
+#else
+		const struct mach_header *header = (const struct mach_header *)_dyld_get_image_header( imageIndex );
+		const struct section *section = getsectbynamefromheader( header, SEG_TEXT, SECT_TEXT );
+#endif
+		if (section == 0) continue;
 		long start = section->addr + _dyld_get_image_vmaddr_slide( imageIndex );
 		long stop = start + section->size;
+		//printf("start %ld %p %s b\n", start, header, _dyld_get_image_name(imageIndex));
 		if( p >= start && p <= stop ) {
 			//	It is truely insane we have to stat() the file system in order
 			//	to discover the size of an in-memory data structure.
@@ -280,8 +335,9 @@ machImageForPointer(
 				// needed for Universal binaries. Check if file is fat and get image size from there.
 				int fd = open (imageName, O_RDONLY);
 				size_t mapSize = *size;
-				char * fileImage = mmap (NULL, mapSize, PROT_READ, MAP_FILE, fd, 0);
+				char * fileImage = mmap (NULL, mapSize, PROT_READ, MAP_FILE|MAP_SHARED, fd, 0);
 				
+				assert(fileImage != MAP_FAILED);
 				struct fat_header* fatHeader = (struct fat_header *)fileImage;
 				if (fatHeader->magic == OSSwapBigToHostInt32(FAT_MAGIC)) {
 					//printf("This is a fat binary\n");
@@ -312,15 +368,15 @@ machImageForPointer(
 				munmap (fileImage, mapSize);
 				close (fd);
 			}
+#if defined(__i386__) // this segment is only available on IA-32
 			if (jumpTableOffset && jumpTableSize) {
-				const struct section * jumpTableSection = getsectbynamefromheader( header,
-																				   "__IMPORT",
-																				   "__jump_table" );
+				const struct section * jumpTableSection = getsectbynamefromheader( header, SEG_IMPORT, "__jump_table" );
 				if (jumpTableSection) {
 					*jumpTableOffset = jumpTableSection->offset;
 					*jumpTableSize = jumpTableSection->size;
 				}
 			}
+#endif
 			return err_none;
 		}
 	}

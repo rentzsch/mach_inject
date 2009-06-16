@@ -172,12 +172,16 @@
 		33B2AC1B092852F2004B1632 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
 			};
 			name = Development;
 		};
 		33B2AC1C092852F2004B1632 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				GCC_VERSION = "";
 			};
 			name = Deployment;
 		};

@@ -16,7 +16,7 @@ FindProcessBySignature(
     
     procInfo.processInfoLength = sizeof( ProcessInfoRec );
     procInfo.processName = nil;
-    procInfo.processAppSpec = nil;
+    //procInfo.processAppSpec = nil;
     
     while( !err ) {
         err = GetNextProcess( &tempPSN );
@@ -45,8 +45,10 @@ FindProcessBySignature(
 	pid_t pid;
 	GetProcessPID( &psn, &pid );
 	
+	printf("pid %d\n", pid);
 	mach_error_t err = mach_inject_bundle_pid(
 		[bundlePath fileSystemRepresentation], pid );
+	mach_error("shit", err);
 	NSLog( @"err = %d", err );
 	[NSApp terminate:nil];
 }

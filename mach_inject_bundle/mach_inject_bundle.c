@@ -32,8 +32,14 @@ mach_inject_bundle_pid(
 	//	Find the injection bundle by name.
 	CFURLRef injectionURL = NULL;
 	if( !err ) {
+		/*injectionURL = CFURLCreateWithFileSystemPath( kCFAllocatorDefault, CFSTR("mach_inject_bundle_stub.bundle"),
+			kCFURLPOSIXPathStyle, true );*/
 		injectionURL = CFBundleCopyResourceURL( frameworkBundle,
 			CFSTR("mach_inject_bundle_stub.bundle"), NULL, NULL );
+		
+		/*char url[1024];
+		CFURLGetFileSystemRepresentation(injectionURL, true, url, 1024);
+		printf("got a URL %s\n", url);*/
 		if( !injectionURL )
 			err = err_mach_inject_bundle_couldnt_find_injection_bundle;
 	}
@@ -76,8 +82,8 @@ mach_inject_bundle_pid(
 	//	Clean up.
 	if( param )
 		free( param );
-	if( injectionBundle )
-		CFRelease( injectionBundle );
+	/*if( injectionBundle )
+		CFRelease( injectionBundle );*/
 	if( injectionURL )
 		CFRelease( injectionURL );
 	

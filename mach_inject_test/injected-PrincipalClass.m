@@ -16,6 +16,7 @@
 @implementation injected_PrincipalClass
 
 + (void)load {
+	printf("LOADDDDDDDDDD!\n");
 	NSConnection *connection = [[NSConnection defaultConnection] retain];
     [connection setRootObject:[[[mach_inject_test_injected_bundle alloc] init] autorelease]];
     [connection registerName:[[connection rootObject] className]];

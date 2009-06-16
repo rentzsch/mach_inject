@@ -11,6 +11,7 @@
 #pragma mark Test Local Override by Pointer
 
 const char* localFunction() {
+	asm("nop;nop;nop;nop;");
 	return __FUNCTION__;
 }
 const char* (*localOriginalPtr)() = localFunction;
@@ -18,16 +19,17 @@ const char* (*localOriginalPtr)() = localFunction;
 void testLocalFunctionOverrideByPointer() {
 	//	Test original.
 	assertStrEqual( "localFunction", localOriginalPtr() );
-	
+
 	//	Override local function by pointer.
 	kern_return_t err;
+	
 	MACH_OVERRIDE( const char*, localFunction, (), err ) {
 		//	Test calling through the reentry island back into the original
 		//	implementation.
 		assertStrEqual( "localFunction", localFunction_reenter() );
 		
 		return "localFunctionOverride";
-	} END_MACH_OVERRIDE;
+	} END_MACH_OVERRIDE(localFunction);
 	assert( !err );
 	
 	//	Test override took effect.
@@ -50,8 +52,8 @@ void testSystemFunctionOverrideByPointer() {
 		//	implementation.
 		assertStrEqual( "Unknown error: 0", strerror_reenter( 0 ) );
 		
-		return "strerrorOverride";
-	} END_MACH_OVERRIDE;
+		return (char *)"strerrorOverride";
+	} END_MACH_OVERRIDE(strerror);
 	assert( !err );
 	
 	//	Test override took effect.
@@ -67,10 +69,10 @@ int (*gReentry_strerror_r)( int, char*, size_t );
 
 void testSystemFunctionOverrideByName() {
 	//	Test original.
-	assertIntEqual( EINVAL, strerror_rPtr( 0, NULL, 0 ) );
+	assertIntEqual( ERANGE, strerror_rPtr( 0, NULL, 0 ) );
 	
 	//	Override local function by pointer.
-	kern_return_t err = mach_override( "_strerror_r",
+	kern_return_t err = mach_override( (char*)"_strerror_r",
 									   NULL,
 									   (void*)&strerror_rOverride,
 									   (void**)&gReentry_strerror_r );
@@ -80,7 +82,7 @@ void testSystemFunctionOverrideByName() {
 }
 
 int strerror_rOverride( int errnum, char *strerrbuf, size_t buflen ) {
-	assertIntEqual( EINVAL, gReentry_strerror_r( 0, NULL, 0 ) );
+	assertIntEqual( ERANGE, gReentry_strerror_r( 0, NULL, 0 ) );
 	
 	return 0;
 }
