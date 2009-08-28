@@ -76,7 +76,7 @@ mach_inject(
 	if( !err ) {
 		err = task_for_pid( mach_task_self(), targetProcess, &remoteTask );
 #if defined(__i386__) || defined(__x86_64__)
-		mach_error("fuck", err);
+		mach_error("mach_inject failing..", err);
 		if (err == 5) fprintf(stderr, "Could not access task for pid %d. You probably need to add user to procmod group\n", targetProcess);
 #endif
 	}
@@ -370,11 +370,29 @@ machImageForPointer(
 			}
 #if defined(__i386__) // this segment is only available on IA-32
 			if (jumpTableOffset && jumpTableSize) {
-				const struct section * jumpTableSection = getsectbynamefromheader( header, SEG_IMPORT, "__jump_table" );
-				if (jumpTableSection) {
-					*jumpTableOffset = jumpTableSection->offset;
-					*jumpTableSize = jumpTableSection->size;
-				}
+			  const struct section * jumpTableSection = getsectbynamefromheader( header, SEG_IMPORT, "__jump_table" );
+
+			  if (!jumpTableSection) {
+			    unsigned char *start, *end;
+			    jumpTableSection = getsectbynamefromheader( header, SEG_TEXT, "__symbol_stub" );
+			    /*
+			    start = end = (char *) header + jumpTableSection->offset;
+			    end += jumpTableSection->size;
+
+			    fprintf(stderr, "start: %p\n", start);
+			    for (; start < end; start += 6) {
+			      fprintf(stderr, "%p: %p: %p\n",
+				      start,
+				      *(void **)(start+2),
+				      **(void ***)(start+2));
+			    }
+			    */
+			  }
+			  
+			  if (jumpTableSection) {
+			    *jumpTableOffset = jumpTableSection->offset;
+			    *jumpTableSize = jumpTableSection->size;
+			  }
 			}
 #endif
 			return err_none;
@@ -398,18 +416,43 @@ void* fixedUpImageFromImage (
 	
 	// address of jump table in copied image
 	void *jumpTable = fixedUpImage + jumpTableOffset;
-	// each JMP instruction is 5 bytes (E9 xx xx xx xx) where E9 is the opcode for JMP
-	int jumpTableCount = jumpTableSize / 5;
+
 	
-	// skip first "E9"
-	jumpTable++;
+	/* indirect jump table */
+	if (*(unsigned char *) jumpTable == 0xff) {
+	  // each indirect JMP instruction is 6 bytes (FF xx xx xx xx xx) where FF is the opcode for JMP
+	  int jumpTableCount = jumpTableSize / 6;
 	
-	int entry=0;
-	for (entry = 0; entry < jumpTableCount; entry++) {
-		unsigned int jmpValue = *((unsigned int *)jumpTable);
-		jmpValue += fixUpOffset;
-		*((unsigned int *)jumpTable) = jmpValue;
-		jumpTable+=5;
+	  // skip first "ff xx"
+	  jumpTable += 2;
+	
+	  int entry=0;
+	  for (entry = 0; entry < jumpTableCount; entry++) {
+	    void *jmpValue = *((void **)jumpTable);
+	    /*
+	    fprintf(stderr, "at %p correcting %p to %p\n",
+		    (char *)jumpTable -2,
+		    jmpValue, jmpValue + fixUpOffset);
+	    */
+	    jmpValue -= fixUpOffset;
+	    *((void **)jumpTable) = jmpValue;
+	    jumpTable+=6;
+	  }
+	}
+	else {
+	  // each JMP instruction is 5 bytes (E9 xx xx xx xx) where E9 is the opcode for JMP
+	  int jumpTableCount = jumpTableSize / 5;
+	
+	  // skip first "E9"
+	  jumpTable++;
+	
+	  int entry=0;
+	  for (entry = 0; entry < jumpTableCount; entry++) {
+	    unsigned int jmpValue = *((unsigned int *)jumpTable);
+	    jmpValue += fixUpOffset;
+	    *((unsigned int *)jumpTable) = jmpValue;
+	    jumpTable+=5;
+	  }
 	}
 	
 	return fixedUpImage;
