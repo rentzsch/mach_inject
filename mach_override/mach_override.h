@@ -57,42 +57,6 @@
 */
 #define	err_cannot_override	(err_local|1)
 
-/***************************************************************************//**
-	Dynamically overrides the function implementation referenced by
-	originalFunctionSymbolName with the implentation pointed to by
-	overrideFunctionAddress. Optionally returns a pointer to a "reentry island"
-	which, if jumped to, will resume the original implementation.
-	
-	@param	originalFunctionSymbolName		->	Required symbol name of the
-												function to override (with
-												overrideFunctionAddress).
-												Remember, C function name
-												symbols are prepended with an
-												underscore.
-	@param	originalFunctionLibraryNameHint	->	Optional name of the library
-												which contains
-												originalFunctionSymbolName. Can
-												be NULL, but this may result in
-												the wrong function being
-												overridden and/or a crash.
-	@param	overrideFunctionAddress			->	Required address to the
-												overriding function.
-	@param	originalFunctionReentryIsland	<-	Optional pointer to pointer to
-												the reentry island. Can be NULL.
-	@result									<-	err_cannot_override if the
-												original function's
-												implementation begins with the
-												'mfctr' instruction.
-
-	***************************************************************************/
-	 
-    mach_error_t
-mach_override(
-    char *originalFunctionSymbolName,
-    const char *originalFunctionLibraryNameHint,
-    const void *overrideFunctionAddress,
-    void **originalFunctionReentryIsland );
-
 /************************************************************************************//**
 	Dynamically overrides the function implementation referenced by
 	originalFunctionAddress with the implentation pointed to by overrideFunctionAddress.
