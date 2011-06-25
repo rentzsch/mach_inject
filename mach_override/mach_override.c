@@ -199,11 +199,11 @@ mach_override_ptr(
 	//	Make the original function implementation writable.
 	if( !err ) {
 		err = vm_protect( mach_task_self(),
-				(vm_address_t) originalFunctionPtr,
-				sizeof(void*), false, (VM_PROT_ALL | VM_PROT_COPY) );
+				(vm_address_t) originalFunctionPtr, 8, false,
+				(VM_PROT_ALL | VM_PROT_COPY) );
 		if( err )
 			err = vm_protect( mach_task_self(),
-					(vm_address_t) originalFunctionPtr, sizeof(void*), false,
+					(vm_address_t) originalFunctionPtr, 8, false,
 					(VM_PROT_DEFAULT | VM_PROT_COPY) );
 	}
 	if (err) printf("err = %x %d\n", err, __LINE__);
