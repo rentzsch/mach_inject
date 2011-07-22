@@ -145,12 +145,12 @@ eatKnownInstructions(
 #pragma mark	-
 #pragma mark	(Interface)
 
-#if defined(__x86_64__)
+#if defined(__i386__) || defined(__x86_64__)
 mach_error_t makeIslandExecutable(void *address) {
 	mach_error_t err = err_none;
     vm_size_t pageSize;
     host_page_size( mach_host_self(), &pageSize );
-    uint64_t page = (uint64_t)address & ~(uint64_t)(pageSize-1);
+    uintptr_t page = (uintptr_t)address & ~(uintptr_t)(pageSize-1);
     int e = err_none;
     e |= mprotect((void *)page, pageSize, PROT_EXEC | PROT_READ | PROT_WRITE);
     e |= msync((void *)page, pageSize, MS_INVALIDATE );
@@ -301,6 +301,13 @@ mach_override_ptr(
 	}
 #endif
 	
+#if defined(__i386__) || defined(__x86_64__)
+	if ( !err )
+	        err = makeIslandExecutable( escapeIsland );
+	if ( !err && reentryIsland )
+	        err = makeIslandExecutable( reentryIsland );
+#endif
+	
 	//	Clean up on error.
 	if( err ) {
 		if( reentryIsland )
@@ -309,11 +316,6 @@ mach_override_ptr(
 			freeBranchIsland( escapeIsland );
 	}
 
-#if defined(__x86_64__)
-        err = makeIslandExecutable(escapeIsland);
-        err = makeIslandExecutable(reentryIsland);
-#endif
-	
 	return err;
 }
 
@@ -355,8 +357,8 @@ allocateBranchIsland(
 			vm_address_t first = (uint64_t)originalFunctionAddress & ~(uint64_t)(((uint64_t)1 << 31) - 1) | ((uint64_t)1 << 31); // start in the middle of the page?
 			vm_address_t last = 0x0;
 #else
-			vm_address_t first = 0xfeffffff;
-			vm_address_t last = 0xfe000000 + pageSize;
+			vm_address_t first = 0xffc00000;
+			vm_address_t last = 0xfffe0000;
 #endif
 
 			vm_address_t page = first;
