@@ -170,6 +170,23 @@ mach_override_ptr(
 	assert( originalFunctionAddress );
 	assert( overrideFunctionAddress );
 	
+	// this addresses overriding such functions as AudioOutputUnitStart()
+	// test with modified DefaultOutputUnit project
+#if defined(__x86_64__) || defined(__i386__)
+    for(;;){
+        if(*(unsigned char*)originalFunctionAddress==0xE9)      // jmp .+0x????????
+            originalFunctionAddress=(void*)((char*)originalFunctionAddress+5+*(int32_t *)((char*)originalFunctionAddress+1));
+#if defined(__x86_64__)
+        else if(*(uint16_t*)originalFunctionAddress==0x25FF)    // jmp qword near [rip+0x????????]
+            originalFunctionAddress=*(void**)((char*)originalFunctionAddress+6+*(int32_t *)((uint16_t*)originalFunctionAddress+1));
+#elif defined(__i386__)
+        else if(*(uint16_t*)originalFunctionAddress==0x25FF)    // jmp *0x????????
+            originalFunctionAddress=**(void***)((uint16_t*)originalFunctionAddress+1);
+#endif
+        else break;
+    }
+#endif
+
 	long	*originalFunctionPtr = (long*) originalFunctionAddress;
 	mach_error_t	err = err_none;
 	
@@ -296,16 +313,16 @@ mach_override_ptr(
 		if( reentryIsland )
 			err = setBranchIslandTarget_i386( reentryIsland,
 										 (void*) ((char *)originalFunctionPtr+eatenCount), originalInstructions );
+		// try making islands executable before planting the jmp
+#if defined(__x86_64__) || defined(__i386__)
+        if( !err )
+            err = makeIslandExecutable(escapeIsland);
+        if( !err && reentryIsland )
+            err = makeIslandExecutable(reentryIsland);
+#endif
 		if ( !err )
 			atomic_mov64((uint64_t *)originalFunctionPtr, jumpRelativeInstruction);
 	}
-#endif
-	
-#if defined(__i386__) || defined(__x86_64__)
-	if ( !err )
-	        err = makeIslandExecutable( escapeIsland );
-	if ( !err && reentryIsland )
-	        err = makeIslandExecutable( reentryIsland );
 #endif
 	
 	//	Clean up on error.
