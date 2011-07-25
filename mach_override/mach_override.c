@@ -603,6 +603,7 @@ eatKnownInstructions(
 		// if all instruction matches failed, we don't know current instruction then, stop here
 		if (!curInstructionKnown) { 
 			allInstructionsKnown = false;
+			fprintf(stderr, "mach_override: some instructions unknown! Need to update mach_override.c\n");
 			break;
 		}
 		
