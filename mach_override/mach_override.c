@@ -210,7 +210,7 @@ mach_override_ptr(
 		overridePossible = false;
 	}
 	if (!overridePossible) err = err_cannot_override;
-	if (err) printf("err = %x %d\n", err, __LINE__);
+	if (err) fprintf(stderr, "err = %x %s:%d\n", err, __FILE__, __LINE__);
 #endif
 	
 	//	Make the original function implementation writable.
@@ -223,13 +223,13 @@ mach_override_ptr(
 					(vm_address_t) originalFunctionPtr, 8, false,
 					(VM_PROT_DEFAULT | VM_PROT_COPY) );
 	}
-	if (err) printf("err = %x %d\n", err, __LINE__);
+	if (err) fprintf(stderr, "err = %x %s:%d\n", err, __FILE__, __LINE__);
 	
 	//	Allocate and target the escape island to the overriding function.
 	BranchIsland	*escapeIsland = NULL;
 	if( !err )	
 		err = allocateBranchIsland( &escapeIsland, kAllocateHigh, originalFunctionAddress );
-		if (err) printf("err = %x %d\n", err, __LINE__);
+		if (err) fprintf(stderr, "err = %x %s:%d\n", err, __FILE__, __LINE__);
 
 	
 #if defined(__ppc__) || defined(__POWERPC__)
@@ -243,12 +243,12 @@ mach_override_ptr(
 		branchAbsoluteInstruction = 0x48000002 | escapeIslandAddress;
 	}
 #elif defined(__i386__) || defined(__x86_64__)
-        if (err) printf("err = %x %d\n", err, __LINE__);
+        if (err) fprintf(stderr, "err = %x %s:%d\n", err, __FILE__, __LINE__);
 
 	if( !err )
 		err = setBranchIslandTarget_i386( escapeIsland, overrideFunctionAddress, 0 );
  
-	if (err) printf("err = %x %d\n", err, __LINE__);
+	if (err) fprintf(stderr, "err = %x %s:%d\n", err, __FILE__, __LINE__);
 	// Build the jump relative instruction to the escape island
 #endif
 
