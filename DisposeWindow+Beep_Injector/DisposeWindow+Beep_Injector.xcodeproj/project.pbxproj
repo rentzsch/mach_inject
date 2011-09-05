@@ -218,7 +218,11 @@
 			isa = PBXProject;
 			buildConfigurationList = 33A73B380928584700F6FEA5 /* Build configuration list for PBXProject "DisposeWindow+Beep_Injector" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* DisposeWindow+Beep_Injector */;
 			projectDirPath = "";
 			projectReferences = (
