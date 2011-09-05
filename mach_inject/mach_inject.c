@@ -37,6 +37,9 @@ void* fixedUpImageFromImage (
 		ptrdiff_t fixUpOffset);
 #endif /* __i386__ */
 
+#include <mach/MACH_ERROR.h>
+#define MACH_ERROR(msg, err) { if(err != err_none) mach_error(msg, err); }
+
 /*******************************************************************************
 *	
 *	Interface
@@ -76,7 +79,7 @@ mach_inject(
 	if( !err ) {
 		err = task_for_pid( mach_task_self(), targetProcess, &remoteTask );
 #if defined(__i386__) || defined(__x86_64__)
-		mach_error("mach_inject failing..", err);
+		MACH_ERROR("mach_inject failing..", err);
 		if (err == 5) fprintf(stderr, "Could not access task for pid %d. You probably need to add user to procmod group\n", targetProcess);
 #endif
 	}
