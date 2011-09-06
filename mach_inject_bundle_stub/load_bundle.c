@@ -95,13 +95,25 @@ load_bundle_executable(
 		const char *bundleExecutableFileSystemRepresentation )
 {
 	assert( bundleExecutableFileSystemRepresentation );
+
+	/*
+	NSBundle* bundle = [NSBundle bundleWithPath:[NSString stringWithUTF8String:bundleExecutableFileSystemRepresentation]];
 	
-	printf("FS rep %s\n", bundleExecutableFileSystemRepresentation);
+	if(![bundle load]) {
+		fprintf(stderr, "mach_inject: failed to load %s\n", bundleExecutableFileSystemRepresentation);
+		return err_load_bundle_NSObjectFileImageFailure;
+	}
+	else
+		fprintf(stderr, "mach_inject: loaded succesfull: %s\n", bundleExecutableFileSystemRepresentation);
+	*/
+	
+	//fprintf(stderr, "FS rep %s\n", bundleExecutableFileSystemRepresentation);
 	void *image = dlopen(bundleExecutableFileSystemRepresentation, RTLD_NOW);
-	printf("OH shit load? %p\n", image);
+	//fprintf(stderr, "OH shit load? %p\n", image);
 	if (!image) {
 		dlerror();
 		return err_load_bundle_NSObjectFileImageFailure;
 	}
+
 	return 0;
 }
