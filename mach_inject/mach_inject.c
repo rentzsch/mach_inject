@@ -79,7 +79,6 @@ mach_inject(
 	if( !err ) {
 		err = task_for_pid( mach_task_self(), targetProcess, &remoteTask );
 #if defined(__i386__) || defined(__x86_64__)
-		MACH_ERROR("mach_inject failing..", err);
 		if (err == 5) fprintf(stderr, "Could not access task for pid %d. You probably need to add user to procmod group\n", targetProcess);
 #endif
 	}
@@ -274,6 +273,7 @@ mach_inject(
 #endif
 	
 	if( err ) {
+		MACH_ERROR("mach_inject failing..", err);
 		if( remoteParamBlock )
 			vm_deallocate( remoteTask, remoteParamBlock, paramSize );
 		if( remoteCode )
@@ -281,9 +281,7 @@ mach_inject(
 		if( remoteStack )
 			vm_deallocate( remoteTask, remoteStack, stackSize );
 	}
-	
-	printf("mach inject done? %d\n", err);
-	
+		
 	return err;
 }
 
