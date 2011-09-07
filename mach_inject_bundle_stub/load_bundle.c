@@ -18,7 +18,7 @@
 load_bundle_package(
 		const char *bundlePackageFileSystemRepresentation )
 {
-	printf("LBP\n");
+	fprintf(stderr, "mach_inject_bundle load_bundle_package: %s\n", bundlePackageFileSystemRepresentation);
 	assert( bundlePackageFileSystemRepresentation );
 	assert( strlen( bundlePackageFileSystemRepresentation ) );
 	

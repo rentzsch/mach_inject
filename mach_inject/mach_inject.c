@@ -66,6 +66,7 @@ mach_inject(
 	unsigned int	jumpTableOffset;
 	unsigned int	jumpTableSize;
 	mach_error_t	err = machImageForPointer( threadEntry, &image, &imageSize, &jumpTableOffset, &jumpTableSize );
+	//fprintf(stderr, "mach_inject: found threadEntry image at: %p with size: %lu\n", image, imageSize);
 	
 	//	Initialize stackSize to default if requested.
 	if( stackSize == 0 )
