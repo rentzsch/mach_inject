@@ -133,8 +133,10 @@ mach_inject(
 #if defined(__x86_64__)
 		imageOffset = 0; // RIP-relative addressing
 #else
-		ASSERT_CAST( void*, remoteCode );
-		imageOffset = ((void*) remoteCode) - image;
+		//ASSERT_CAST( void*, remoteCode );
+		//imageOffset = ((void*) remoteCode) - image;
+		// WARNING: See bug https://github.com/rentzsch/mach_star/issues/11 . Not sure about this.
+		imageOffset = 0;
 #endif
 	}
 	
