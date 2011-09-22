@@ -11,16 +11,19 @@
 #include <mach-o/dyld.h>
 #include <dlfcn.h>
 
+#include <mach/MACH_ERROR.h>
+#define MACH_ERROR(msg, err) { if(err != err_none) mach_error(msg, err); }
+
 	mach_error_t
 load_bundle_package(
 		const char *bundlePackageFileSystemRepresentation )
 {
-	printf("LBP\n");
+	fprintf(stderr, "mach_inject_bundle load_bundle_package: %s\n", bundlePackageFileSystemRepresentation);
 	assert( bundlePackageFileSystemRepresentation );
 	assert( strlen( bundlePackageFileSystemRepresentation ) );
 	
 	mach_error_t err = err_none;
-	mach_error("mach error on bundle load", err);
+	MACH_ERROR("mach error on bundle load", err);
 
 	//	Morph the FSR into a URL.
 	CFURLRef bundlePackageURL = NULL;
@@ -33,7 +36,7 @@ load_bundle_package(
 		if( bundlePackageURL == NULL )
 			err = err_load_bundle_url_from_path;
 	}
-	mach_error("mach error on bundle load", err);
+	MACH_ERROR("mach error on bundle load", err);
 
 	//	Create bundle.
 	CFBundleRef bundle = NULL;
@@ -42,7 +45,7 @@ load_bundle_package(
 		if( bundle == NULL )
 			err = err_load_bundle_create_bundle;
 	}
-	mach_error("mach error on bundle load", err);
+	MACH_ERROR("mach error on bundle load", err);
 
 	//	Discover the bundle's executable file.
 	CFURLRef bundleExecutableURL = NULL;
@@ -52,7 +55,7 @@ load_bundle_package(
 		if( bundleExecutableURL == NULL )
 			err = err_load_bundle_package_executable_url;
 	}
-	mach_error("mach error on bundle load", err);
+	MACH_ERROR("mach error on bundle load", err);
 
 	//	Morph the executable's URL into an FSR.
 	char bundleExecutableFileSystemRepresentation[PATH_MAX];
@@ -67,7 +70,7 @@ load_bundle_package(
 			err = err_load_bundle_path_from_url;
 		}
 	}
-	mach_error("mach error on bundle load", err);
+	MACH_ERROR("mach error on bundle load", err);
 
 	//	Do the real work.
 	if( !err ) {
@@ -83,7 +86,7 @@ load_bundle_package(
 	if( bundlePackageURL )
 		CFRelease( bundlePackageURL );
 	
-	mach_error("mach error on bundle load", err);
+	MACH_ERROR("mach error on bundle load", err);
 	return err;
 }
 
@@ -92,13 +95,25 @@ load_bundle_executable(
 		const char *bundleExecutableFileSystemRepresentation )
 {
 	assert( bundleExecutableFileSystemRepresentation );
+
+	/*
+	NSBundle* bundle = [NSBundle bundleWithPath:[NSString stringWithUTF8String:bundleExecutableFileSystemRepresentation]];
 	
-	printf("FS rep %s\n", bundleExecutableFileSystemRepresentation);
+	if(![bundle load]) {
+		fprintf(stderr, "mach_inject: failed to load %s\n", bundleExecutableFileSystemRepresentation);
+		return err_load_bundle_NSObjectFileImageFailure;
+	}
+	else
+		fprintf(stderr, "mach_inject: loaded succesfull: %s\n", bundleExecutableFileSystemRepresentation);
+	*/
+	
+	//fprintf(stderr, "FS rep %s\n", bundleExecutableFileSystemRepresentation);
 	void *image = dlopen(bundleExecutableFileSystemRepresentation, RTLD_NOW);
-	printf("OH shit load? %p\n", image);
+	//fprintf(stderr, "OH shit load? %p\n", image);
 	if (!image) {
 		dlerror();
 		return err_load_bundle_NSObjectFileImageFailure;
 	}
+
 	return 0;
 }

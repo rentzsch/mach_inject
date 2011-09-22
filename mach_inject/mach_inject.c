@@ -37,6 +37,9 @@ void* fixedUpImageFromImage (
 		ptrdiff_t fixUpOffset);
 #endif /* __i386__ */
 
+#include <mach/MACH_ERROR.h>
+#define MACH_ERROR(msg, err) { if(err != err_none) mach_error(msg, err); }
+
 /*******************************************************************************
 *	
 *	Interface
@@ -63,6 +66,7 @@ mach_inject(
 	unsigned int	jumpTableOffset;
 	unsigned int	jumpTableSize;
 	mach_error_t	err = machImageForPointer( threadEntry, &image, &imageSize, &jumpTableOffset, &jumpTableSize );
+	//fprintf(stderr, "mach_inject: found threadEntry image at: %p with size: %lu\n", image, imageSize);
 	
 	//	Initialize stackSize to default if requested.
 	if( stackSize == 0 )
@@ -76,7 +80,6 @@ mach_inject(
 	if( !err ) {
 		err = task_for_pid( mach_task_self(), targetProcess, &remoteTask );
 #if defined(__i386__) || defined(__x86_64__)
-		mach_error("mach_inject failing..", err);
 		if (err == 5) fprintf(stderr, "Could not access task for pid %d. You probably need to add user to procmod group\n", targetProcess);
 #endif
 	}
@@ -271,6 +274,7 @@ mach_inject(
 #endif
 	
 	if( err ) {
+		MACH_ERROR("mach_inject failing..", err);
 		if( remoteParamBlock )
 			vm_deallocate( remoteTask, remoteParamBlock, paramSize );
 		if( remoteCode )
@@ -278,9 +282,7 @@ mach_inject(
 		if( remoteStack )
 			vm_deallocate( remoteTask, remoteStack, stackSize );
 	}
-	
-	printf("mach inject done? %d\n", err);
-	
+		
 	return err;
 }
 
