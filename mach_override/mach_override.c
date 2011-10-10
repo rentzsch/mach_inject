@@ -134,7 +134,17 @@ eatKnownInstructions(
 	unsigned char	*code, 
 	uint64_t		*newInstruction,
 	int				*howManyEaten, 
-	char			*originalInstructions );
+	char			*originalInstructions,
+	int				*originalInstructionCount, 
+	uint8_t			*originalInstructionSizes );
+
+	static void
+fixupInstructions(
+    void		*originalFunction,
+    void		*escapeIsland,
+    void		*instructionsToFix,
+	int			instructionCount,
+	uint8_t		*instructionSizes );
 #endif
 
 /*******************************************************************************
@@ -172,17 +182,16 @@ mach_override_ptr(
 	
 	// this addresses overriding such functions as AudioOutputUnitStart()
 	// test with modified DefaultOutputUnit project
-#if defined(__x86_64__) || defined(__i386__)
-    for(;;){
-        if(*(unsigned char*)originalFunctionAddress==0xE9)      // jmp .+0x????????
-            originalFunctionAddress=(void*)((char*)originalFunctionAddress+5+*(int32_t *)((char*)originalFunctionAddress+1));
 #if defined(__x86_64__)
-        else if(*(uint16_t*)originalFunctionAddress==0x25FF)    // jmp qword near [rip+0x????????]
+    for(;;){
+        if(*(uint16_t*)originalFunctionAddress==0x25FF)    // jmp qword near [rip+0x????????]
             originalFunctionAddress=*(void**)((char*)originalFunctionAddress+6+*(int32_t *)((uint16_t*)originalFunctionAddress+1));
+        else break;
+    }
 #elif defined(__i386__)
-        else if(*(uint16_t*)originalFunctionAddress==0x25FF)    // jmp *0x????????
+    for(;;){
+        if(*(uint16_t*)originalFunctionAddress==0x25FF)    // jmp *0x????????
             originalFunctionAddress=**(void***)((uint16_t*)originalFunctionAddress+1);
-#endif
         else break;
     }
 #endif
@@ -200,11 +209,15 @@ mach_override_ptr(
 		err = err_cannot_override;
 #elif defined(__i386__) || defined(__x86_64__)
 	int eatenCount = 0;
+	int originalInstructionCount = 0;
 	char originalInstructions[kOriginalInstructionsSize];
+	uint8_t originalInstructionSizes[kOriginalInstructionsSize];
 	uint64_t jumpRelativeInstruction = 0; // JMP
 
 	Boolean overridePossible = eatKnownInstructions ((unsigned char *)originalFunctionPtr, 
-										&jumpRelativeInstruction, &eatenCount, originalInstructions);
+										&jumpRelativeInstruction, &eatenCount, 
+										originalInstructions, &originalInstructionCount, 
+										originalInstructionSizes );
 	if (eatenCount > kOriginalInstructionsSize) {
 		//printf ("Too many instructions eaten\n");
 		overridePossible = false;
@@ -264,10 +277,13 @@ mach_override_ptr(
 	}
 #endif
 	
-	//	Optionally allocate & return the reentry island.
+	//	Optionally allocate & return the reentry island. This may contain relocated
+	//  jmp instructions and so has all the same addressing reachability requirements
+	//  the escape island has to the original function, except the escape island is
+	//  technically our original function.
 	BranchIsland	*reentryIsland = NULL;
 	if( !err && originalFunctionReentryIsland ) {
-		err = allocateBranchIsland( &reentryIsland, kAllocateNormal, NULL);
+		err = allocateBranchIsland( &reentryIsland, kAllocateHigh, escapeIsland);
 		if( !err )
 			*originalFunctionReentryIsland = reentryIsland;
 	}
@@ -310,6 +326,9 @@ mach_override_ptr(
 	//
 	// Note that on i386, we do not support someone else changing the code under our feet
 	if ( !err ) {
+		fixupInstructions(originalFunctionPtr, reentryIsland, originalInstructions,
+					originalInstructionCount, originalInstructionSizes );
+	
 		if( reentryIsland )
 			err = setBranchIslandTarget_i386( reentryIsland,
 										 (void*) ((char *)originalFunctionPtr+eatenCount), originalInstructions );
@@ -550,6 +569,7 @@ typedef struct {
 
 #if defined(__i386__)
 static AsmInstructionMatch possibleInstructions[] = {
+	{ 0x5, {0xFF, 0x00, 0x00, 0x00, 0x00}, {0xE9, 0x00, 0x00, 0x00, 0x00} },	// jmp 0x????????
 	{ 0x5, {0xFF, 0xFF, 0xFF, 0xFF, 0xFF}, {0x55, 0x89, 0xe5, 0xc9, 0xc3} },	// push %ebp; mov %esp,%ebp; leave; ret
 	{ 0x1, {0xFF}, {0x90} },							// nop
 	{ 0x1, {0xFF}, {0x55} },							// push %esp
@@ -567,6 +587,7 @@ static AsmInstructionMatch possibleInstructions[] = {
 };
 #elif defined(__x86_64__)
 static AsmInstructionMatch possibleInstructions[] = {
+	{ 0x5, {0xFF, 0x00, 0x00, 0x00, 0x00}, {0xE9, 0x00, 0x00, 0x00, 0x00} },	// jmp 0x????????
 	{ 0x1, {0xFF}, {0x90} },							// nop
 	{ 0x1, {0xF8}, {0x50} },							// push %rX
 	{ 0x3, {0xFF, 0xFF, 0xFF}, {0x48, 0x89, 0xE5} },				// mov %rsp,%rbp
@@ -600,17 +621,21 @@ static Boolean codeMatchesInstruction(unsigned char *code, AsmInstructionMatch* 
 #if defined(__i386__) || defined(__x86_64__)
 	static Boolean 
 eatKnownInstructions( 
-	unsigned char *code, 
-	uint64_t* newInstruction,
-	int* howManyEaten, 
-	char* originalInstructions )
+	unsigned char	*code, 
+	uint64_t		*newInstruction,
+	int				*howManyEaten, 
+	char			*originalInstructions,
+	int				*originalInstructionCount, 
+	uint8_t			*originalInstructionSizes )
 {
 	Boolean allInstructionsKnown = true;
 	int totalEaten = 0;
 	unsigned char* ptr = code;
 	int remainsToEat = 5; // a JMP instruction takes 5 bytes
+	int instructionIndex = 0;
 	
 	if (howManyEaten) *howManyEaten = 0;
+	if (originalInstructionCount) *originalInstructionCount = 0;
 	while (remainsToEat > 0) {
 		Boolean curInstructionKnown = false;
 		
@@ -633,6 +658,10 @@ eatKnownInstructions(
 		ptr += eaten;
 		remainsToEat -= eaten;
 		totalEaten += eaten;
+		
+		if (originalInstructionSizes) originalInstructionSizes[instructionIndex] = eaten;
+		instructionIndex += 1;
+		if (originalInstructionCount) *originalInstructionCount = instructionIndex;
 	}
 
 
@@ -662,6 +691,30 @@ eatKnownInstructions(
 	}
 
 	return allInstructionsKnown;
+}
+
+	static void
+fixupInstructions(
+    void		*originalFunction,
+    void		*escapeIsland,
+    void		*instructionsToFix,
+	int			instructionCount,
+	uint8_t		*instructionSizes )
+{
+	int	index;
+	for (index = 0;index < instructionCount;index += 1)
+	{
+		if (*(uint8_t*)instructionsToFix == 0xE9) // 32-bit jump relative
+		{
+			uint32_t offset = (uintptr_t)originalFunction - (uintptr_t)escapeIsland;
+			uint32_t *jumpOffsetPtr = (uint32_t*)((uintptr_t)instructionsToFix + 1);
+			*jumpOffsetPtr += offset;
+		}
+		
+		originalFunction = (void*)((uintptr_t)originalFunction + instructionSizes[index]);
+		escapeIsland = (void*)((uintptr_t)escapeIsland + instructionSizes[index]);
+		instructionsToFix = (void*)((uintptr_t)instructionsToFix + instructionSizes[index]);
+    }
 }
 #endif
 
