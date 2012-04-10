@@ -2,7 +2,7 @@
 
 `mach_star` is an open-source code suite for suppressing, replacing and/or extending Mac OS X functionality at a very low level. Its principal components are `mach_override` (replace and/or extend existing functions at runtime) and `mach_inject` (dynamically load your code into a running process).
 
-Please use [`mach_star's` Lighthouse project site](http://rentzsch.lighthouseapp.com/projects/27728-mach_star/tickets) to [file bugs or feature requests](http://rentzsch.lighthouseapp.com/projects/27728-mach_star/tickets/new).
+Please use mach_star's [issues tab](https://github.com/rentzsch/mach_star/issues) to [file bugs or feature requests](https://github.com/rentzsch/mach_star/issues/new).
 
 ##Version History
 
