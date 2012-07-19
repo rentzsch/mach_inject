@@ -393,7 +393,7 @@ allocateBranchIsland(
 			vm_address_t first = 0xfeffffff;
 			vm_address_t last = 0xfe000000 + pageSize;
 #elif defined(__x86_64__)
-			vm_address_t first = (uint64_t)originalFunctionAddress & ~(uint64_t)(((uint64_t)1 << 31) - 1) | ((uint64_t)1 << 31); // start in the middle of the page?
+			vm_address_t first = ((uint64_t)originalFunctionAddress & ~(uint64_t)(((uint64_t)1 << 31) - 1)) | ((uint64_t)1 << 31); // start in the middle of the page?
 			vm_address_t last = 0x0;
 #else
 			vm_address_t first = 0xffc00000;
