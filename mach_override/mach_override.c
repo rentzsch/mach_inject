@@ -371,36 +371,57 @@ allocateBranchIsland(
 		void *originalFunctionAddress)
 {
 	assert( island );
-	
 	assert( sizeof( BranchIsland ) <= kPageSize );
-#if defined(__ppc__) || defined(__POWERPC__)
-	vm_address_t first = 0xfeffffff;
-	vm_address_t last = 0xfe000000 + kPageSize;
-#elif defined(__x86_64__)
-	vm_address_t first = ((uint64_t)originalFunctionAddress & ~(uint64_t)(((uint64_t)1 << 31) - 1)) | ((uint64_t)1 << 31); // start in the middle of the page?
-	vm_address_t last = 0x0;
-#else
-	vm_address_t first = 0xffc00000;
-	vm_address_t last = 0xfffe0000;
-#endif
 
-	vm_address_t page = first;
 	vm_map_t task_self = mach_task_self();
+	vm_address_t original_address = (vm_address_t) originalFunctionAddress;
+	static vm_address_t last_allocated = 0;
+	vm_address_t address =
+		last_allocated ? last_allocated : original_address;
 
-	while( page != last ) {
-		mach_error_t err = vm_allocate( task_self, &page, kPageSize, 0 );
-		if( err == err_none ) {
-			*island = (BranchIsland*) page;
-			return err_none;
-                }
-		if( err != KERN_NO_SPACE )
-			return err;
-#if defined(__x86_64__)
-		page -= kPageSize;
+	for (;;) {
+		vm_size_t vmsize = 0;
+		memory_object_name_t object = 0;
+		kern_return_t kr = 0;
+		vm_region_flavor_t flavor = VM_REGION_BASIC_INFO;
+		// Find the page the address is in.
+#if __WORDSIZE == 32
+		vm_region_basic_info_data_t info;
+		mach_msg_type_number_t info_count = VM_REGION_BASIC_INFO_COUNT;
+		kr = vm_region(task_self, &address, &vmsize, flavor,
+			       (vm_region_info_t)&info, &info_count, &object);
 #else
-		page += kPageSize;
+		vm_region_basic_info_data_64_t info;
+		mach_msg_type_number_t info_count = VM_REGION_BASIC_INFO_COUNT_64;
+		kr = vm_region_64(task_self, &address, &vmsize, flavor,
+				  (vm_region_info_t)&info, &info_count, &object);
 #endif
-		err = err_none;
+		if (kr != KERN_SUCCESS)
+			return kr;
+
+		// Don't underflow. This could be made to work, but this is a
+		// convenient place to give up.
+		assert((address & (kPageSize - 1)) == 0);
+		if (address == 0)
+			break;
+
+		// Go back one page.
+		vm_address_t new_address = address - kPageSize;
+#if __WORDSIZE == 64
+		if(original_address - new_address - 5 > INT32_MAX)
+			break;
+#endif
+		address = new_address;
+
+		// Try to allocate this page.
+		kr = vm_allocate(task_self, &address, kPageSize, 0);
+		if (kr == KERN_SUCCESS) {
+			*island = (BranchIsland*) address;
+			last_allocated = address;
+			return err_none;
+		}
+		if (kr != KERN_NO_SPACE)
+			return kr;
 	}
 
 	return KERN_NO_SPACE;
