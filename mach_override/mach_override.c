@@ -373,43 +373,41 @@ allocateBranchIsland(
 	assert( island );
 	
 	mach_error_t	err = err_none;
-	
-	if( !err ) {
-		assert( sizeof( BranchIsland ) <= kPageSize );
+
+	assert( sizeof( BranchIsland ) <= kPageSize );
 #if defined(__ppc__) || defined(__POWERPC__)
-		vm_address_t first = 0xfeffffff;
-		vm_address_t last = 0xfe000000 + kPageSize;
+	vm_address_t first = 0xfeffffff;
+	vm_address_t last = 0xfe000000 + kPageSize;
 #elif defined(__x86_64__)
-		vm_address_t first = ((uint64_t)originalFunctionAddress & ~(uint64_t)(((uint64_t)1 << 31) - 1)) | ((uint64_t)1 << 31); // start in the middle of the page?
-		vm_address_t last = 0x0;
+	vm_address_t first = ((uint64_t)originalFunctionAddress & ~(uint64_t)(((uint64_t)1 << 31) - 1)) | ((uint64_t)1 << 31); // start in the middle of the page?
+	vm_address_t last = 0x0;
 #else
-		vm_address_t first = 0xffc00000;
-		vm_address_t last = 0xfffe0000;
+	vm_address_t first = 0xffc00000;
+	vm_address_t last = 0xfffe0000;
 #endif
 
-		vm_address_t page = first;
-		int allocated = 0;
-		vm_map_t task_self = mach_task_self();
+	vm_address_t page = first;
+	int allocated = 0;
+	vm_map_t task_self = mach_task_self();
 			
-		while( !err && !allocated && page != last ) {
+	while( !err && !allocated && page != last ) {
 
-			err = vm_allocate( task_self, &page, kPageSize, 0 );
-			if( err == err_none )
-				allocated = 1;
-			else if( err == KERN_NO_SPACE ) {
+		err = vm_allocate( task_self, &page, kPageSize, 0 );
+		if( err == err_none )
+			allocated = 1;
+		else if( err == KERN_NO_SPACE ) {
 #if defined(__x86_64__)
-				page -= kPageSize;
+			page -= kPageSize;
 #else
-				page += kPageSize;
+			page += kPageSize;
 #endif
-				err = err_none;
-			}
+			err = err_none;
 		}
-		if( allocated )
-			*island = (BranchIsland*) page;
-		else if( !allocated && !err )
-			err = KERN_NO_SPACE;
 	}
+	if( allocated )
+		*island = (BranchIsland*) page;
+	else if( !allocated && !err )
+		err = KERN_NO_SPACE;
 
 	return err;
 }
