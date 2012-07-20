@@ -428,18 +428,9 @@ freeBranchIsland(
 {
 	assert( island );
 	assert( (*(long*)&island->instructions[0]) == kIslandTemplate[0] );
-	
-	mach_error_t	err = err_none;
-	
-
-	if( !err ) {
-		assert( sizeof( BranchIsland ) <= kPageSize );
-		err = vm_deallocate(
-				    mach_task_self(),
-				    (vm_address_t) island, kPageSize );
-	}
-	
-	return err;
+	assert( sizeof( BranchIsland ) <= kPageSize );
+	return vm_deallocate( mach_task_self(), (vm_address_t) island,
+			      kPageSize );
 }
 
 /***************************************************************************//**
