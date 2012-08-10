@@ -1,12 +1,10 @@
-/*******************************************************************************
-	mach_inject_bundle_stub.c
-		Copyright (c) 2003-2009 Jonathan 'Wolf' Rentzsch: <http://rentzsch.com>
-		Some rights reserved: <http://opensource.org/licenses/mit-license.php>
-		
-	Design inspired by SCPatchLoader, by Jon Gotow of St. Clair Software:
-		<http://www.stclairsoft.com>
-
-	***************************************************************************/
+// mach_inject_bundle_stub.c semver:1.2.0
+//   Copyright (c) 2003-2012 Jonathan 'Wolf' Rentzsch: http://rentzsch.com
+//   Some rights reserved: http://opensource.org/licenses/mit
+//   https://github.com/rentzsch/mach_inject
+//
+//   Design inspired by SCPatchLoader by Jon Gotow of St. Clair Software:
+//   http://www.stclairsoft.com
 
 #include "mach_inject_bundle_stub.h"
 #include "load_bundle.h"

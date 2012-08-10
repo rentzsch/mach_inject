@@ -1,18 +1,12 @@
-/*******************************************************************************
-	load_bundle.h
-		Copyright (c) 2003-2009 Jonathan 'Wolf' Rentzsch: <http://rentzsch.com>
-		Some rights reserved: <http://opensource.org/licenses/mit-license.php>
-
-	***************************************************************************/
+// load_bundle.h semver:1.2.0
+//   Copyright (c) 2003-2012 Jonathan 'Wolf' Rentzsch: http://rentzsch.com
+//   Some rights reserved: http://opensource.org/licenses/mit
+//   https://github.com/rentzsch/mach_inject
 
 #ifndef		_loader_
 #define		_loader_
 
 #include <mach/error.h>
-
-#ifdef	__cplusplus
-	extern	"C"	{
-#endif
 
 #define	err_load_bundle_undefined_symbol					(err_local|1)
 #define	err_load_bundle_link_failed							(err_local|2)
@@ -30,6 +24,8 @@
 	(err_local|7+NSObjectFileImageFormat)
 #define err_load_bundle_NSObjectFileImageAccess				\
 	(err_local|7+NSObjectFileImageAccess)
+	
+__BEGIN_DECLS
 
 //	High-level: For loading 'MyBundle.bundle'. Calls load_bundle_executable().
 	mach_error_t
@@ -41,7 +37,5 @@ load_bundle_package(
 load_bundle_executable(
 	const char *bundleExecutableFileSystemRepresentation );
 
-#ifdef	__cplusplus
-	}
-#endif
+__END_DECLS
 #endif	//	_loader_

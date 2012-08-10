@@ -1,21 +1,8 @@
-/*******************************************************************************
-	mach_inject.h
-		Copyright (c) 2003-2009 Jonathan 'Wolf' Rentzsch: <http://rentzsch.com>
-		Some rights reserved: <http://opensource.org/licenses/mit-license.php>
-
-	***************************************************************************/
+// mach_inject.h semver:1.2.0
+//   Copyright (c) 2003-2012 Jonathan 'Wolf' Rentzsch: http://rentzsch.com
+//   Some rights reserved: http://opensource.org/licenses/mit
+//   https://github.com/rentzsch/mach_inject
 	
-/***************************************************************************//**
-	@mainpage	mach_inject
-	@author		Jonathan 'Wolf' Rentzsch: <http://rentzsch.com>
-	
-	This package, coded in C to the Mach API, allows you to "inject" code into
-	an arbitrary process. "Injection" means both 1) copying over the necessary
-	code into the target's address space and 2) remotely creating a new thread
-	to execute the code.
-
-	***************************************************************************/
-
 #ifndef		_mach_inject_
 #define		_mach_inject_
 
@@ -24,10 +11,6 @@
 #include <mach/vm_types.h>
 #include <stddef.h> // for ptrdiff_t
 
-#ifdef	__cplusplus
-	extern	"C"	{
-#endif
-
 #define	err_threadEntry_image_not_found			(err_local|1)
 
 #define	INJECT_ENTRY		injectEntry
@@ -35,8 +18,10 @@
 
 typedef	void	(*mach_inject_entry)( ptrdiff_t codeOffset, void *paramBlock,
 				size_t paramSize, void* dummy_pthread_data );
+
+__BEGIN_DECLS
 	
-/***************************************************************************//**
+/*******************************************************************************
 	Starts executing threadEntry in a new thread in the process specified by
 	targetProcess.
 	
@@ -60,7 +45,7 @@ mach_inject(
 		pid_t					targetProcess,
 		vm_size_t				stackSize );
 
-/***************************************************************************//**
+/*******************************************************************************
 	Given a pointer, returns its Mach-O image and image size.
 	
 	@param	pointer			->	Required pointer.
@@ -81,7 +66,5 @@ machImageForPointer(
 		unsigned int *jumpTableOffset,
 		unsigned int *jumpTableSize );
 
-#ifdef	__cplusplus
-	}
-#endif
+__END_DECLS
 #endif	//	_mach_inject_
