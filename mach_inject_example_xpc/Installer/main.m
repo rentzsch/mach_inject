@@ -48,19 +48,11 @@ static void __XPC_Peer_Event_Handler(xpc_connection_t connection, xpc_object_t e
         syslog(LOG_NOTICE, "JINX INSTALLATIONS");
         DKFrameworkInstaller *installer = [DKFrameworkInstaller new];
         [installer installFramework:frameworkPath];
-        syslog(LOG_NOTICE, "JINX INSTALLATIONS");
         
         //});
 
-        syslog(LOG_NOTICE, "HOLY SHIT");
-        syslog(LOG_NOTICE, "HOLY SHIT");
-        syslog(LOG_NOTICE, "HOLY SHIT");
-
-        syslog(LOG_NOTICE, [[NSString stringWithFormat:@"%s", response] UTF8String]);
         
-        syslog(LOG_NOTICE, "HOLY SHIT");
-        syslog(LOG_NOTICE, "HOLY SHIT");
-        syslog(LOG_NOTICE, "HOLY SHIT");
+        syslog(LOG_NOTICE, [[NSString stringWithFormat:@"%s", response] UTF8String]);
         
         
         xpc_object_t reply = xpc_dictionary_create_reply(event);
