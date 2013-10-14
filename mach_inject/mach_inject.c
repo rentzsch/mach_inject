@@ -237,7 +237,7 @@ mach_inject(
 		vm_address_t dummy_thread_struct = remoteStack;
 		remoteStack += (stackSize / 2); // this is the real stack
 		// (*) increase the stack, since we're simulating a CALL instruction, which normally pushes return address on the stack
-		remoteStack -= 4;
+		remoteStack -= 8;
 		
 #define PARAM_COUNT 0
 #define STACK_CONTENTS_SIZE ((1+PARAM_COUNT) * sizeof(unsigned long long))
