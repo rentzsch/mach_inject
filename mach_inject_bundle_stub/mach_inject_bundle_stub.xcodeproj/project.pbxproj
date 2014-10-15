@@ -284,6 +284,7 @@
 				ARCHS = (
 					ppc,
 					i386,
+					x86_64,
 				);
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_ENABLE_TRIGRAPHS = NO;
