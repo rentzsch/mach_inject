@@ -14,6 +14,18 @@ Please base your work off the unstable branch. Then submit your Pull Request.
 
 ## Version History
 
+### mach_inject 1.3: Nov 08 2016
+
+* [NEW] Add demo project ([Erwan Barrier](https://github.com/rentzsch/mach_inject/pull/3))
+
+* [CHANGE] Switch from `__pthread_set_self` to `_pthread_set_self` on 10.12. ([wzqcongcong](https://github.com/rentzsch/mach_inject/pull/19), rentzsch)
+
+* [FIX] Adjust stack alignment for 10.9 to avoid crash. [issue 5](https://github.com/rentzsch/mach_inject/issues/5) ([Giovanni Donelli](https://github.com/rentzsch/mach_inject/pull/6))
+
+* [FIX] Comment out fprintf for 10.10 and genericize `CODE_SIGN_IDENTITY`. [issue 13](https://github.com/rentzsch/mach_inject/issues/13) ([Rainburst](https://github.com/rentzsch/mach_inject/pull/14))
+
+* [FIX] Add error check. ([Nat!](https://github.com/rentzsch/mach_inject/pull/9))
+
 ### mach_inject 1.2: Aug 10 2012
 
 * [NEW] i386 and x86_64 support.
