@@ -63,9 +63,14 @@ INJECT_ENTRY(
 	// On intel, per-pthread data is a zone of data that must be allocated.
 	// if not, all function trying to access per-pthread data (all mig functions for instance)
 	// will crash. 
-	// on macOS Serria, should use _pthread_set_self from libSystem.B.dylb
-	extern void _pthread_set_self(char*);
-	_pthread_set_self(dummy_pthread_struct);
+    #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+        // on macOS Serria, should use _pthread_set_self from libSystem.B.dylb
+        extern void _pthread_set_self(char*);
+        _pthread_set_self(dummy_pthread_struct);
+    #else
+        extern void __pthread_set_self(char*);
+        __pthread_set_self(dummy_pthread_struct);
+    #endif
 #endif
 
 //	fprintf(stderr, "mach_inject_bundle: entered in %s, codeOffset: %td, param: %p, paramSize: %lu\n",
